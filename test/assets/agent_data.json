@@ -9,7 +9,9 @@
 
     "network_interfaces": {
       "eth0": {
-        "ipv4_address": "10.0.0.1",
+        "labels": {
+          "ipv4_address": "10.0.0.1"
+        },
         "packets": {
           "rx": 72113462,
           "rx_errors": 0,
@@ -27,8 +29,10 @@
 
     "disks": {
       "/dev/sda1": {
-        "mount_point": "/",
-        "file_system": "ext3",
+        "labels": {
+          "mount_point": "/",
+          "file_system": "ext3"
+        },
         "size": 4896400,
         "used": 2948648,
         "available": 1699024
