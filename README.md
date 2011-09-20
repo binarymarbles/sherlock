@@ -15,6 +15,14 @@ feature highlights will be:
   Sherlock by the agents.
 * Indexed and searchable log data from each node.
 
+It will also be using file system based configuration files to set up
+everything instead of a database-oriented and UI-administerable configuration
+system, to make Sherlock easy to configure and administer using configuration
+management tools like Chef. If you have an infrastructure you care enough
+about to monitor it, you should care enough to use Chef or any other similar
+tools as well. A Chef cookbook will be built for Sherlock after the initial
+implementation phase has completed and we have a working beta release.
+
 The Sherlock server itself will be written in
 [CoffeeScript](http://jashkenas.github.com/coffee-script/) and will be built
 using [Node](http://nodejs.org/).
