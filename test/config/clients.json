@@ -1,0 +1,29 @@
+[
+
+  {
+    "id": "test-client-1",
+    "name": "Test Client 1",
+    "contacts": [
+      {
+        "name": "Test Client 1 Contact 1",
+        "email": "testcontact1@testclient1.tld"
+      }
+    ]
+  },
+
+  {
+    "id": "test-client-2",
+    "name": "Test Client 2",
+    "contacts": [
+      {
+        "name": "Test Client 2 Contact 1",
+        "email": "testcontact1@testclient2.tld"
+      },
+      {
+        "name": "Test Client 2 Contact 2",
+        "email": "testcontact2@testclient2.tld"
+      }
+    ]
+  }
+
+]

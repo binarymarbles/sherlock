@@ -1,0 +1,19 @@
+[
+
+  {
+    "id": "test1",
+    "hostname": "test1.fqdn",
+    "ip_address": "10.0.0.1",
+    "client": "test-client-1",
+    "provider": "test-provider-1"
+  },
+
+  {
+    "id": "test2",
+    "hostname": "test2.fqdn",
+    "ip_address": "10.0.0.2",
+    "client": "test-client-2",
+    "provider": "test-provider-2"
+  }
+
+]
