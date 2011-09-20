@@ -21,3 +21,8 @@ using [Node](http://nodejs.org/).
 
 The system agents have not yet been planned, but they will most likely be
 implemented in Ruby or Python.
+
+# License
+
+Sherlock is copyright 2011 by [Binary Marbles](http://www.binarymarbles.com/),
+released under the Apache 2.0 License (see LICENSE for details).
