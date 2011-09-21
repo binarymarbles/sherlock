@@ -1,12 +1,13 @@
 {
   "name": "Sherlock",
-  "version": "0.0.1.ALPHA",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "express": "2.4.6",
     "sass": ">= 0.0.1",
     "jade": ">= 0.0.1",
-    "underscore": ">= 1.1.7"
+    "underscore": ">= 1.1.7",
+    "mongoose": "2.1.4"
   },
   "devDependencies": {
     "expresso": ">= 0.8.1",

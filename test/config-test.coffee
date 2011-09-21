@@ -1,17 +1,18 @@
 should = require 'should'
+assert = require 'assert'
 
 configModule = require '../lib/config'
 configModule.setConfigDirectory './test/config'
 
 module.exports =
-  'load config files': ->
-    config = configModule.load()
-    config.clients.length.should == 2
-    config.providers.length.should == 2
-    config.nodes.length.should == 2
+  'load valid config files': ->
+    assert.doesNotThrow ->
+      configModule.load()
 
   'load client configurations': ->
     config = configModule.load()
+    config.clients.length.should == 2
+
     config.clients[0].id.should.equal 'test-client-1'
     config.clients[0].name.should.equal 'Test Client 1'
     config.clients[0].contacts.length.should.equal 1
@@ -28,6 +29,8 @@ module.exports =
 
   'load provider configurations': ->
     config = configModule.load()
+    config.providers.length.should == 2
+
     config.providers[0].id.should.equal 'test-provider-1'
     config.providers[0].name.should.equal 'Test Provider 1'
 
@@ -36,6 +39,8 @@ module.exports =
 
   'load node configurations': ->
     config = configModule.load()
+    config.nodes.length.should == 2
+
     config.nodes[0].id.should.equal 'test1'
     config.nodes[0].hostname.should.equal 'test1.fqdn'
     config.nodes[0].ip_address.should.equal '10.0.0.1'

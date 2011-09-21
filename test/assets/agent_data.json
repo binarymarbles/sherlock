@@ -1,6 +1,6 @@
 {
   "node": "test1",
-  "agent_version": "0.0.1.ALPHA",
+  "agent_version": "1.0.0",
   "data": {
 
     "load": {

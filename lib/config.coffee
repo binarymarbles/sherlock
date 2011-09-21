@@ -10,7 +10,7 @@ config = null
 
 # Holds the path to the configuration directory where the configuration files
 # are found.
-configDirectory = '../config'
+configDirectory = __dirname + '/../config'
 
 # The application configuration class. This holds configuration information
 # about all the data registered in the configuration files.
@@ -36,6 +36,11 @@ class Config
   nodeById: (id) ->
     _.first _.select @nodes, (node) =>
       node.id == id
+
+  # Returns the node matching the specified hostname.
+  nodeByHostname: (hostname) ->
+    _.first _.select @nodes, (node) =>
+      node.hostname == hostname
 
   # Returns the path to the specified configuration file.
   configFilePath: (filename) ->
