@@ -10,4 +10,4 @@ console.log 'aquiring connection'
 connection = mongoose.connect "mongodb://#{mongoHostname}/#{mongoDatabase}"
 console.log 'connection aquired'
 
-module.exports = connection.connection
+module.exports = connection

@@ -41,19 +41,19 @@ jsonWithoutData = JSON.parse(validJson)
 delete jsonWithoutData.data
 jsonWithoutData = JSON.stringify(jsonWithoutData)
 
-# Missing data.processes.
+# Missing processes.
 jsonWithoutProcesses = JSON.parse(validJson)
-delete jsonWithoutProcesses.data.processes
+delete jsonWithoutProcesses.processes
 jsonWithoutProcesses = JSON.stringify(jsonWithoutProcesses)
 
-# Invalid data.processes.
+# Invalid processes.
 jsonWithInvalidProcesses = JSON.parse(validJson)
-jsonWithInvalidProcesses.data.processes = 'invalid'
+jsonWithInvalidProcesses.processes = 'invalid'
 jsonWithInvalidProcesses = JSON.stringify(jsonWithInvalidProcesses)
 
-# Empty data.processes.
+# Empty processes.
 jsonWithEmptyProcesses = JSON.parse(validJson)
-jsonWithEmptyProcesses.data.processes = []
+jsonWithEmptyProcesses.processes = []
 jsonWithEmptyProcesses = JSON.stringify(jsonWithEmptyProcesses)
 
 module.exports = testCase
@@ -119,17 +119,17 @@ module.exports = testCase
       new SnapshotParser jsonWithoutData
     test.done()
 
-  'do not accept missing data.processes': (test) ->
+  'do not accept missing processes': (test) ->
     test.throws ->
       new SnapshotParser jsonWithoutProcesses
     test.done()
 
-  'do not accept non-array data.processes': (test) ->
+  'do not accept non-array processes': (test) ->
     test.throws ->
       new SnapshotParser jsonWithInvalidProcesses
     test.done()
 
-  'do not accept empty data.processes': (test) ->
+  'do not accept empty processes': (test) ->
     test.throws ->
       new SnapshotPArser jsonWithEmptyProcesses
     test.done()

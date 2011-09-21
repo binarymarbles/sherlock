@@ -25,12 +25,12 @@ class SnapshotParser
     throw new Error 'Missing agent version element in payload' unless @json.agent_version?
     throw new Error 'Unknown agent version in payload' unless @json.agent_version == '1.0.0'
 
+    # We require that we have at least one process in the process list.
+    throw new Error 'Missing processes element in payload' unless @json.processes?
+    throw new Error 'Invalid processes element in payload' unless _.isArray(@json.processes) && @json.processes.length > 0
+
     # We require that the data has a "data" hash.
     throw new Error 'Missing data element in payload' unless @json.data?
-
-    # We require that we have at least one process in the process list.
-    throw new Error 'Missing data.processes element in payload' unless @json.data.processes?
-    throw new Error 'Invalid data.processes element in payload' unless _.isArray(@json.data.processes) && @json.data.processes.length > 0
 
   # Store the snapshot data in the database.
   storeSnapshot: ->
@@ -55,7 +55,7 @@ class SnapshotParser
 
   # Write the process list to the snapshot instance for the JSON data.
   writeProcesses: ->
-    for processInfo in @json.data.processes
+    for processInfo in @json.processes
 
       process = new Process
         snapshot: @snapshot._id

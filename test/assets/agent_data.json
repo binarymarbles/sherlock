@@ -1,6 +1,36 @@
 {
   "node": "test1",
   "agent_version": "1.0.0",
+
+  "processes": [
+    {
+      "user": "root",
+      "pid": 30632,
+      "cpu": 0.2,
+      "memory": 1.2,
+      "virtual_memory_size": 136536,
+      "residential_set_size": 1584,
+      "tty": "?",
+      "state": "Ss",
+      "started_at": "2011-09-13 14:15:01",
+      "cpu_time": "0:16",
+      "command": "/usr/sbin/apache2 -k start"
+    },
+    {
+      "user": "trond",
+      "pid": 22441,
+      "cpu": 0.0,
+      "memory": 1.5,
+      "virtual_memory_size": 25012,
+      "residential_set_size": 7844,
+      "tty": "pts/0",
+      "state": "Ss",
+      "started_at": "2011-09-19 16:55:24",
+      "cpu_time": "0:00",
+      "command": "-bash"
+    }
+  ],
+  
   "data": {
 
     "load": {
@@ -51,36 +81,7 @@
         "used": 170580,
         "free": 94628
       }
-    },
-
-    "processes": [
-      {
-        "user": "root",
-        "pid": 30632,
-        "cpu": 0.2,
-        "memory": 1.2,
-        "virtual_memory_size": 136536,
-        "residential_set_size": 1584,
-        "tty": "?",
-        "state": "Ss",
-        "started_at": "2011-09-13 14:15:01",
-        "cpu_time": "0:16",
-        "command": "/usr/sbin/apache2 -k start"
-      },
-      {
-        "user": "trond",
-        "pid": 22441,
-        "cpu": 0.0,
-        "memory": 1.5,
-        "virtual_memory_size": 25012,
-        "residential_set_size": 7844,
-        "tty": "pts/0",
-        "state": "Ss",
-        "started_at": "2011-09-19 16:55:24",
-        "cpu_time": "0:00",
-        "command": "-bash"
-      }
-    ]
+    }
     
   }
 }

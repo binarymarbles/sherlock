@@ -1,7 +1,7 @@
 express = require 'express'
 app = module.exports = express.createServer()
 
-dbConnection = (require './lib/db_connection').get()
+require './lib/db_connection'
 SnapshotParser = require './lib/snapshot_parser'
 
 # Configuration
@@ -32,6 +32,8 @@ app.post '/watson/snapshot', (req, res) ->
 
   response_code = 200
   response_message = 'OK'
+
+  console.log 'Handling snapshot:', req.body.payload
 
   try
     parser = new SnapshotParser req.body.payload
