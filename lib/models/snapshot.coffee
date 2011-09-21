@@ -1,3 +1,4 @@
+require 'node-date'
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
@@ -7,15 +8,19 @@ Snapshot = new Schema
     type: String
     required: true
 
-  # timestamp:
-  #   type: Date
-  #   required: true
+  timestamp:
+    type: Date
+    required: true
 
-  # key:
-  #   type: String
-  #   required: true
-  #   index:
-  #     unique: true
+  key:
+    type: String
+    # required: true
+    index:
+      unique: true
+
+Snapshot.pre 'save', (next) ->
+  @key = "#{@node_id}:#{@timestamp.toFormat('YYYY-MM-DD-HH24-MI-SS')}"
+  next()
 
 mongoose.model 'Snapshot', Snapshot
 module.exports = mongoose.model 'Snapshot'

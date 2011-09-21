@@ -7,10 +7,10 @@
     "sass": ">= 0.0.1",
     "jade": ">= 0.0.1",
     "underscore": ">= 1.1.7",
-    "mongoose": "2.1.4"
+    "mongoose": ">= 2.1.4",
+    "node-date": ">= 0.0.1"
   },
   "devDependencies": {
-    "expresso": ">= 0.8.1",
-    "should": ">= 0.3.1"
+    "nodeunit": ">= 0.5.5"
   }
 }

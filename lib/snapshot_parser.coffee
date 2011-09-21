@@ -1,8 +1,10 @@
+_ = require 'underscore'
+
 config = (require './config').load()
-# Snapshot = require './models/snapshot'
-# Process = require './models/process'
-# MetricLabel = require './models/metric_label'
-# Metric = require './models/metric'
+Snapshot = require './models/snapshot'
+Process = require './models/process'
+MetricLabel = require './models/metric_label'
+Metric = require './models/metric'
 
 class SnapshotParser
 
@@ -26,8 +28,54 @@ class SnapshotParser
     # We require that the data has a "data" hash.
     throw new Error 'Missing data element in payload' unless @json.data?
 
+    # We require that we have at least one process in the process list.
+    throw new Error 'Missing data.processes element in payload' unless @json.data.processes?
+    throw new Error 'Invalid data.processes element in payload' unless _.isArray(@json.data.processes) && @json.data.processes.length > 0
+
   # Store the snapshot data in the database.
   storeSnapshot: ->
+    @snapshot = @writeSnapshot()
 
+    # Store all the processes
+    @writeProcesses()
+
+    # Extract and store all the labels in the JSON structure.
+    @extractAndWriteLabels()
+
+    # Write the metrics found in the JSON structure.
+    @writeMetrics()
+
+  # Create a snapshot instance for the JSON data.
+  writeSnapshot: ->
+    snapshot = new Snapshot
+      node_id: @json.node
+      timestamp: new Date()
+    snapshot.save()
+    snapshot
+
+  # Write the process list to the snapshot instance for the JSON data.
+  writeProcesses: ->
+    for processInfo in @json.data.processes
+
+      process = new Process
+        snapshot: @snapshot._id
+        user: processInfo.user
+        pid: processInfo.pid
+        cpu_usage: processInfo.cpu
+        memory_usage: processInfo.memory
+        virtual_memory_size: processInfo.virtual_memory_size
+        residental_set_size: processInfo.residental_set_size
+        tty: processInfo.tty
+        state: processInfo.state
+        started_at: new Date(processInfo.started_at)
+        cpu_time: processInfo.cpu_time
+        command: processInfo.command
+      process.save()
+
+  # Extract and write all labels in the JSON data structure.
+  extractAndWriteLabels: ->
+
+  # Write the metrics found in the JSON data structure.
+  writeMetrics: ->
 
 module.exports = SnapshotParser

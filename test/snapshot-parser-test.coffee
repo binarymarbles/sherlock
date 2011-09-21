@@ -1,17 +1,16 @@
-should = require 'should'
-assert = require 'assert'
+testCase = (require 'nodeunit').testCase
 fs = require 'fs'
+mongoose = require 'mongoose'
 
 configModule = require '../lib/config'
 configModule.setConfigDirectory './test/config'
-
-dbConnection = (require '../lib/db_connection').aquire()
-dbConnection.on 'open', ->
-  console.log 'DB connection is now open'
-
+ 
 SnapshotParser = require '../lib/snapshot_parser'
 Snapshot = require '../lib/models/snapshot'
-
+Process = require '../lib/models/snapshot'
+MetricLabel = require '../lib/models/snapshot'
+Metric = require '../lib/models/snapshot'
+ 
 validJson = fs.readFileSync "#{__dirname}/assets/agent_data.json", 'utf-8'
 
 #
@@ -42,42 +41,113 @@ jsonWithoutData = JSON.parse(validJson)
 delete jsonWithoutData.data
 jsonWithoutData = JSON.stringify(jsonWithoutData)
 
-module.exports =
-  'accept valid json data': ->
-    assert.doesNotThrow ->
+# Missing data.processes.
+jsonWithoutProcesses = JSON.parse(validJson)
+delete jsonWithoutProcesses.data.processes
+jsonWithoutProcesses = JSON.stringify(jsonWithoutProcesses)
+
+# Invalid data.processes.
+jsonWithInvalidProcesses = JSON.parse(validJson)
+jsonWithInvalidProcesses.data.processes = 'invalid'
+jsonWithInvalidProcesses = JSON.stringify(jsonWithInvalidProcesses)
+
+# Empty data.processes.
+jsonWithEmptyProcesses = JSON.parse(validJson)
+jsonWithEmptyProcesses.data.processes = []
+jsonWithEmptyProcesses = JSON.stringify(jsonWithEmptyProcesses)
+
+module.exports = testCase
+  setUp: (callback) ->
+    console.log 'In setUp'
+    try
+      @db = mongoose.connect 'mongodb://localhost/sherlock_test'
+      # @db = mongoose.createConnection 'mongodb://localhost/sherlock_test'
+      console.log 'Started connection, waiting for it to open'
+      @db.connection.on 'open', ->
+      # @db.on 'open', ->
+
+        console.log 'Opened connection'
+
+        # Remove all collections
+        Snapshot.collection.remove()
+        Process.collection.remove()
+        MetricLabel.collection.remove()
+        Metric.collection.remove()
+
+        callback()
+
+    catch err
+      console.log 'Setting up failed:', err.message
+
+  tearDown: (callback) ->
+    console.log 'In tearDown'
+    try
+      console.log 'Closing connection'
+      @db.disconnect()
+      # @db.close()
+      callback()
+    catch err
+      console.log 'Tearing down failed:', err.message
+
+  'accept valid json data': (test) ->
+    test.doesNotThrow ->
       new SnapshotParser validJson
+    test.done()
 
-  'do not accept missing node': ->
-    assert.throws ->
+  'do not accept missing node': (test) ->
+    test.throws ->
       new SnapshotParser jsonWithoutNode
+    test.done()
 
-  'do not accept invalid node': ->
-    assert.throws ->
+  'do not accept invalid node': (test) ->
+    test.throws ->
       new SnapshotParser jsonWithInvalidNode
+    test.done()
 
-  'do not accept missing agent version': ->
-    assert.throws ->
+  'do not accept missing agent version': (test) ->
+    test.throws ->
       new SnapshotParser jsonWithoutAgentVersion
+    test.done()
 
-  'do not accept invalid agent version': ->
-    assert.throws ->
+  'do not accept invalid agent version': (test) ->
+    test.throws ->
       new SnapshotParser jsonWithInvalidAgentVersion
+    test.done()
 
-  'do not accept missing data': ->
-    assert.throws ->
+  'do not accept missing data': (test) ->
+    test.throws ->
       new SnapshotParser jsonWithoutData
+    test.done()
 
-  'store snapshot without failing': ->
+  'do not accept missing data.processes': (test) ->
+    test.throws ->
+      new SnapshotParser jsonWithoutProcesses
+    test.done()
+
+  'do not accept non-array data.processes': (test) ->
+    test.throws ->
+      new SnapshotParser jsonWithInvalidProcesses
+    test.done()
+
+  'do not accept empty data.processes': (test) ->
+    test.throws ->
+      new SnapshotPArser jsonWithEmptyProcesses
+    test.done()
+
+  'store snapshot without failing': (test) ->
     parser = new SnapshotParser validJson
-    assert.doesNotThrow ->
+    test.doesNotThrow ->
       parser.storeSnapshot()
-
-  'create a snapshot instance': ->
+    test.done()
+ 
+  'create a snapshot instance': (test) ->
     parser = new SnapshotParser validJson
     parser.storeSnapshot()
-    dbConnection.on 'open', (arg) ->
-      console.log 'Attempting to query using dbConnection', dbConnection
-      r = Snapshot.count()# {}, (err, doc) ->
-        # console.log 'Err:', err
-        # console.log 'Doc:', doc
-      console.log 'Done querying for count, r=', r
+
+    # console.log 'About to query for snapshots using connection', @db
+
+    console.log 'Executing count on Snapshot'
+    Snapshot.count {}, (count) ->
+      console.log 'Got count callback', count
+      test.done()
+  #   console.log 'Fired off count'
