@@ -2,7 +2,7 @@ mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
 # Define the schema for the "processes" collection.
-Process = new Schema
+processSchema = new Schema
   snapshot:
     type: Schema.ObjectId
     ref: 'Snapshot'
@@ -20,5 +20,7 @@ Process = new Schema
   cpu_time: String
   command: String
 
-mongoose.model 'Process', Process
+mongoose.model 'Process', processSchema
+
 module.exports = mongoose.model 'Process'
+

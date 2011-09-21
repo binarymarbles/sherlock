@@ -1,15 +1,18 @@
 testCase = (require 'nodeunit').testCase
 fs = require 'fs'
+async = require 'async'
 mongoose = require 'mongoose'
 
 configModule = require '../lib/config'
 configModule.setConfigDirectory './test/config'
  
+mongoose.connect 'mongodb://localhost/sherlock_test'
+
 SnapshotParser = require '../lib/snapshot_parser'
-Snapshot = require '../lib/models/snapshot'
-Process = require '../lib/models/snapshot'
-MetricLabel = require '../lib/models/snapshot'
-Metric = require '../lib/models/snapshot'
+Snapshot = (require '../lib/models/snapshot')
+Process = (require '../lib/models/process')
+MetricLabel = (require '../lib/models/metric_label')
+Metric = (require '../lib/models/metric')
  
 validJson = fs.readFileSync "#{__dirname}/assets/agent_data.json", 'utf-8'
 
@@ -58,36 +61,23 @@ jsonWithEmptyProcesses = JSON.stringify(jsonWithEmptyProcesses)
 
 module.exports = testCase
   setUp: (callback) ->
-    console.log 'In setUp'
-    try
-      @db = mongoose.connect 'mongodb://localhost/sherlock_test'
-      # @db = mongoose.createConnection 'mongodb://localhost/sherlock_test'
-      console.log 'Started connection, waiting for it to open'
-      @db.connection.on 'open', ->
-      # @db.on 'open', ->
-
-        console.log 'Opened connection'
-
-        # Remove all collections
-        Snapshot.collection.remove()
-        Process.collection.remove()
-        MetricLabel.collection.remove()
-        Metric.collection.remove()
-
-        callback()
-
-    catch err
-      console.log 'Setting up failed:', err.message
+    callback()
 
   tearDown: (callback) ->
-    console.log 'In tearDown'
-    try
-      console.log 'Closing connection'
-      @db.disconnect()
-      # @db.close()
+
+    # Remove all collections and call the callback.
+    async.parallel [
+        (callback) ->
+          Snapshot.collection.remove callback
+      , (callback) ->
+          Process.collection.remove callback
+      , (callback) ->
+          MetricLabel.collection.remove callback
+      , (callback) ->
+          Metric.collection.remove callback
+    ], (err, results) ->
+
       callback()
-    catch err
-      console.log 'Tearing down failed:', err.message
 
   'accept valid json data': (test) ->
     test.doesNotThrow ->
@@ -131,7 +121,7 @@ module.exports = testCase
 
   'do not accept empty processes': (test) ->
     test.throws ->
-      new SnapshotPArser jsonWithEmptyProcesses
+      new SnapshotParser jsonWithEmptyProcesses
     test.done()
 
   'store snapshot without failing': (test) ->
@@ -139,15 +129,3 @@ module.exports = testCase
     test.doesNotThrow ->
       parser.storeSnapshot()
     test.done()
- 
-  'create a snapshot instance': (test) ->
-    parser = new SnapshotParser validJson
-    parser.storeSnapshot()
-
-    # console.log 'About to query for snapshots using connection', @db
-
-    console.log 'Executing count on Snapshot'
-    Snapshot.count {}, (count) ->
-      console.log 'Got count callback', count
-      test.done()
-  #   console.log 'Fired off count'

@@ -8,9 +8,11 @@
     "jade": ">= 0.0.1",
     "underscore": ">= 1.1.7",
     "mongoose": ">= 2.1.4",
-    "node-date": ">= 0.0.1"
+    "node-date": ">= 0.0.1",
+    "async": ">= 0.1.10"
   },
   "devDependencies": {
-    "nodeunit": ">= 0.5.5"
+    "nodeunit": ">= 0.5.5",
+    "expresso": ">= 0.8.1",
   }
 }

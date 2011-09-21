@@ -1,16 +1,19 @@
 _ = require 'underscore'
+mongoose = require 'mongoose'
 
 config = (require './config').load()
-Snapshot = require './models/snapshot'
-Process = require './models/process'
-MetricLabel = require './models/metric_label'
-Metric = require './models/metric'
+
+Snapshot = (require './models/snapshot')
+Process = (require './models/process')
+MetricLabel = (require './models/metric_label')
+Metric = (require './models/metric')
 
 class SnapshotParser
 
   constructor: (rawJson) ->
     @json = JSON.parse(rawJson)
     @validateJson()
+    @flattenData()
 
   # Validate the contents of the JSON data structure.
   validateJson: ->
@@ -31,6 +34,44 @@ class SnapshotParser
 
     # We require that the data has a "data" hash.
     throw new Error 'Missing data element in payload' unless @json.data?
+
+  # Extract all keys from the data hash in the JSON data structure and store it
+  # as an array where each element contains a hash with the keys "key" (an array
+  # of each keys identifying the path of the value) and "value" (the value of
+  # the path).
+  #
+  # Example:
+  # [
+  #   {
+  #     key: ['path', 'to', 'value'],
+  #     value: 14
+  #   },
+  #   {
+  #     key: ['path', 'to', 'other', 'value'],
+  #     value: 0
+  #   }
+  # ]
+  flattenData: ->
+    @data = []
+
+    walk = (prefixKeys, obj) =>
+      for property of obj
+        value = obj[property]
+        if typeof value == 'object'
+
+          newPrefix = _.clone prefixKeys
+          newPrefix.push property
+          walk newPrefix, value
+
+        else
+
+          keys = _.clone prefixKeys
+          keys.push property
+          @data.push
+            key: keys
+            value: value
+
+    walk [], @json.data
 
   # Store the snapshot data in the database.
   storeSnapshot: ->
@@ -70,12 +111,47 @@ class SnapshotParser
         started_at: new Date(processInfo.started_at)
         cpu_time: processInfo.cpu_time
         command: processInfo.command
-      process.save()
+      process.save (error) ->
+        if error?
+          throw new Error error
 
-  # Extract and write all labels in the JSON data structure.
+  # Find the label information from the @data list and remove them, while
+  # writing the label information to the database.
   extractAndWriteLabels: ->
+
+    # Holds a list of index positions in the @data array where labels are
+    # stored, since we need to remove them after we're done processing them.
+    labelIndexes = []
+    for dataIndex in [0 .. @data.length - 1]
+
+      key = @data[dataIndex].key
+      value = @data[dataIndex].value
+
+      if _.include key, 'labels'
+        labelIndexes.push dataIndex
+
+        label = new MetricLabel
+          snapshot: @snapshot._id
+          path: key
+          value: value
+        label.save (error) ->
+          if error?
+            throw new Error error
+
+    # Remove the identified label indexes from the data array.
+    for labelIndex in labelIndexes.reverse()
+      @data.splice labelIndex, 1
 
   # Write the metrics found in the JSON data structure.
   writeMetrics: ->
+    for element in @data
+
+      metric = new Metric
+        snapshot: @snapshot._id
+        path: element.key
+        counter: element.value
+      metric.save (error) ->
+        if error?
+          throw new Error error
 
 module.exports = SnapshotParser

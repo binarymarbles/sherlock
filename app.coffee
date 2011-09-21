@@ -33,8 +33,6 @@ app.post '/watson/snapshot', (req, res) ->
   response_code = 200
   response_message = 'OK'
 
-  console.log 'Handling snapshot:', req.body.payload
-
   try
     parser = new SnapshotParser req.body.payload
     parser.storeSnapshot()

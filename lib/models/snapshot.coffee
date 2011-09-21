@@ -3,7 +3,7 @@ mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
 # Define the schema for the "snapshots" collection.
-Snapshot = new Schema
+snapshotSchema = new Schema
   node_id:
     type: String
     required: true
@@ -14,13 +14,14 @@ Snapshot = new Schema
 
   key:
     type: String
-    # required: true
     index:
       unique: true
+    # required: true
 
-Snapshot.pre 'save', (next) ->
+snapshotSchema.pre 'save', (next) ->
   @key = "#{@node_id}:#{@timestamp.toFormat('YYYY-MM-DD-HH24-MI-SS')}"
   next()
 
-mongoose.model 'Snapshot', Snapshot
+mongoose.model 'Snapshot', snapshotSchema
+
 module.exports = mongoose.model 'Snapshot'
