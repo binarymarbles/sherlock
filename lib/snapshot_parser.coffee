@@ -11,11 +11,30 @@ Metric = (require './models/metric')
 
 class SnapshotParser
 
-  constructor: (rawJson) ->
-    @json = JSON.parse(rawJson)
-    @validateJson()
+  constructor: (rawJson, callback) ->
+
+    callback = callback || (error) ->
+
+    # Parse the JSON.
+    try
+      @json = JSON.parse(rawJson)
+    catch error
+      callback error
+      return
+
+    # Validate the JSON data.
+    try
+      @validateJson()
+    catch error
+      callback error
+      return
+
+    # Flatten the metric data and extract metric labels.
     @flattenData()
     @extractLabels()
+
+    # Store the snapshot and call our callback when its complete.
+    @storeSnapshot callback
 
   # Validate the contents of the JSON data structure.
   validateJson: ->
@@ -131,8 +150,8 @@ class SnapshotParser
           (callback) =>
             @writeMetrics callback
 
-        ], (err, result) ->
-          callback err
+        ], (err, result) =>
+          callback err, @snapshot
 
   # Create a snapshot instance for the JSON data.
   writeSnapshot: (callback) ->

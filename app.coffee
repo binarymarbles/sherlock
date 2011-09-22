@@ -30,22 +30,18 @@ app.get '/', (req, res) ->
 
 app.post '/watson/snapshot', (req, res) ->
 
-  response_code = 200
-  response_message = 'OK'
+  new SnapshotParser req.body.payload, (error, snapshot) ->
 
-  try
-    parser = new SnapshotParser req.body.payload
-    parser.storeSnapshot()
-  catch err
-    response_code = 422
-    response_message = err.message
+    if error?
+      console.log 'Handling watson snapshot failed, error is', error.message
+      res.writeHead 422, 'Content-Type': 'text/plain'
+      res.end "ERROR: #{error.message}"
 
-  console.log 'Handled Watson snapshot - response code =', response_code, ', response message =', response_message
+    else
 
-  # Dump the response to the client.
-  res.writeHead response_code,
-    'Content-Type': 'text/plain'
-  res.end response_message
+      console.log 'Successfully handled Watson snapshot, stored with ID', snapshot.id, 'and key', snapshot.key
+      res.writeHead 200, 'Content-Type': 'text/plain'
+      res.end "OK: #{snapshot.id}"
 
 app.listen(6750)
 console.log 'Sherlock listening on port %d in %s mode', app.address().port, app.settings.env

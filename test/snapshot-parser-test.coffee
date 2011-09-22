@@ -80,60 +80,52 @@ module.exports = testCase
       callback()
 
   'accept valid json data': (test) ->
-    test.doesNotThrow ->
-      new SnapshotParser validJson
-    test.done()
+    new SnapshotParser validJson, (error) ->
+      test.ok !error?
+      test.done()
 
   'do not accept missing node': (test) ->
-    test.throws ->
-      new SnapshotParser jsonWithoutNode
-    test.done()
+    new SnapshotParser jsonWithoutNode, (error) ->
+      test.ok error?
+      test.done()
 
   'do not accept invalid node': (test) ->
-    test.throws ->
-      new SnapshotParser jsonWithInvalidNode
-    test.done()
+    new SnapshotParser jsonWithInvalidNode, (error) ->
+      test.ok error?
+      test.done()
 
   'do not accept missing agent version': (test) ->
-    test.throws ->
-      new SnapshotParser jsonWithoutAgentVersion
-    test.done()
+    new SnapshotParser jsonWithoutAgentVersion, (error) ->
+      test.ok error?
+      test.done()
 
   'do not accept invalid agent version': (test) ->
-    test.throws ->
-      new SnapshotParser jsonWithInvalidAgentVersion
-    test.done()
+    new SnapshotParser jsonWithInvalidAgentVersion, (error) ->
+      test.ok error?
+      test.done()
 
   'do not accept missing data': (test) ->
-    test.throws ->
-      new SnapshotParser jsonWithoutData
-    test.done()
+    new SnapshotParser jsonWithoutData, (error) ->
+      test.ok error?
+      test.done()
 
   'do not accept missing processes': (test) ->
-    test.throws ->
-      new SnapshotParser jsonWithoutProcesses
-    test.done()
+    new SnapshotParser jsonWithoutProcesses, (error) ->
+      test.ok error?
+      test.done()
 
   'do not accept non-array processes': (test) ->
-    test.throws ->
-      new SnapshotParser jsonWithInvalidProcesses
-    test.done()
+    new SnapshotParser jsonWithInvalidProcesses, (error) ->
+      test.ok error?
+      test.done()
 
   'do not accept empty processes': (test) ->
-    test.throws ->
-      new SnapshotParser jsonWithEmptyProcesses
-    test.done()
-
-  'store snapshot without failing': (test) ->
-    parser = new SnapshotParser validJson
-    test.doesNotThrow ->
-      parser.storeSnapshot (error) ->
-        test.ifError error
-        test.done()
+    new SnapshotParser jsonWithEmptyProcesses, (error) ->
+      test.ok error?
+      test.done()
 
   'have one snapshot': (test) ->
-    parser = new SnapshotParser validJson
-    parser.storeSnapshot (error) ->
+    new SnapshotParser validJson, (error) ->
       test.ifError(error)
 
       Snapshot.count (error, count) ->
@@ -142,8 +134,7 @@ module.exports = testCase
         test.done()
 
   'have two processes': (test) ->
-    parser = new SnapshotParser validJson
-    parser.storeSnapshot (error) ->
+    new SnapshotParser validJson, (error) ->
       test.ifError(error)
 
       Process.count (error, count) ->
@@ -152,8 +143,7 @@ module.exports = testCase
         test.done()
 
   'have three labels': (test) ->
-    parser = new SnapshotParser validJson
-    parser.storeSnapshot (error) ->
+    new SnapshotParser validJson, (error) ->
       test.ifError(error)
 
       MetricLabel.count (error, count) ->
@@ -162,8 +152,7 @@ module.exports = testCase
         test.done()
 
   'have nineteen metrics': (test) ->
-    parser = new SnapshotParser validJson
-    parser.storeSnapshot (error) ->
+    new SnapshotParser validJson, (error) ->
       test.ifError(error)
 
       Metric.count (error, count) ->
