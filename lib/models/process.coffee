@@ -5,7 +5,10 @@ Schema = mongoose.Schema
 processSchema = new Schema
   snapshot:
     type: Schema.ObjectId
-    ref: 'Snapshot'
+    required: true
+
+  snapshot_timestamp:
+    type: Date
     required: true
 
   user: String

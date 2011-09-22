@@ -6,11 +6,15 @@ metricLabelSchema = new Schema(
   {
     snapshot:
       type: Schema.ObjectId
-      ref: 'Snapshot'
+      required: true
+
+    snapshot_timestamp:
+      type: Date
       required: true
 
     path:
-      type: [String]
+      # type: [String]
+      type: String
       required: true
 
     value:

@@ -54,6 +54,23 @@
           "rx": 48991202398,
           "tx": 47529730387
         }
+      },
+      "eth1": {
+        "labels": {
+          "ipv4_address": "10.0.0.2"
+        },
+        "packets": {
+          "rx": 100,
+          "rx_errors": 0,
+          "rx_dropped": 0,
+          "tx": 200,
+          "tx_errors": 0,
+          "tx_dropped": 0
+        },
+        "bytes": {
+          "rx": 100,
+          "tx": 200
+        }
       }
     },
 

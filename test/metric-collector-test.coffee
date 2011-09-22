@@ -2,6 +2,7 @@ testCase = (require 'nodeunit').testCase
 fs = require 'fs'
 async = require 'async'
 mongoose = require 'mongoose'
+_ = require 'underscore'
 
 configModule = require '../lib/config'
 configModule.setConfigDirectory './test/config'
@@ -43,7 +44,14 @@ module.exports = testCase
     test.equals collector.graph.id, 'load_average'
     test.done()
 
-  'calculate metrics': (test) ->
+  'calculate metrics for single-key graph': (test) ->
     collector = new MetricCollector config.nodeById('test1'), config.graphById('load_average')
-    collector.metrics ->
+    collector.metrics (error, dataSet) ->
+      test.equals _.keys(dataSet).length, 1
+      test.done()
+
+  'calculate metrics for multi-key graph': (test) ->
+    collector = new MetricCollector config.nodeById('test1'), config.graphById('network_traffic')
+    collector.metrics (error, dataSet) ->
+      test.equals _.keys(dataSet).length, 4
       test.done()

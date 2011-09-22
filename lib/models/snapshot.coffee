@@ -16,7 +16,6 @@ snapshotSchema = new Schema
     type: String
     index:
       unique: true
-    # required: true
 
 snapshotSchema.pre 'save', (next) ->
   @key = "#{@node_id}:#{@timestamp.toFormat('YYYY-MM-DD-HH24-MI-SS')}"

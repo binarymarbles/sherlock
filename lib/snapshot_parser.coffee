@@ -168,7 +168,8 @@ class SnapshotParser
     for processInfo in @json.processes
 
       process = new Process
-        snapshot: @snapshot._id
+        snapshot: @snapshot.id
+        snapshot_timestamp: @snapshot.timestamp
         user: processInfo.user
         pid: processInfo.pid
         cpu_usage: processInfo.cpu
@@ -197,8 +198,10 @@ class SnapshotParser
     for label in @labels
 
         labelModel = new MetricLabel
-          snapshot: @snapshot._id
-          path: label.key
+          snapshot: @snapshot.id
+          snapshot_timestamp: @snapshot.timestamp
+          # path: label.key
+          path: label.key.join '.'
           value: label.value
         labelModels.push labelModel
 
@@ -217,8 +220,10 @@ class SnapshotParser
     for element in @data
 
       metric = new Metric
-        snapshot: @snapshot._id
-        path: element.key
+        snapshot: @snapshot.id
+        snapshot_timestamp: @snapshot.timestamp
+        # path: element.key
+        path: element.key.join '.'
         counter: element.value
       metricModels.push metric
 

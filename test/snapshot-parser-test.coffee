@@ -123,7 +123,7 @@ module.exports = testCase
       test.ok error?
       test.done()
 
-  'have one snapshot': (test) ->
+  'have 1 snapshot': (test) ->
     new SnapshotParser validJson, (error) ->
       test.ifError(error)
 
@@ -132,7 +132,7 @@ module.exports = testCase
         test.equals count, 1
         test.done()
 
-  'have two processes': (test) ->
+  'have 2 processes': (test) ->
     new SnapshotParser validJson, (error) ->
       test.ifError(error)
 
@@ -141,20 +141,20 @@ module.exports = testCase
         test.equals count, 2
         test.done()
 
-  'have three labels': (test) ->
+  'have 3 labels': (test) ->
     new SnapshotParser validJson, (error) ->
       test.ifError(error)
 
       MetricLabel.count (error, count) ->
         test.ifError error
-        test.equals count, 3
+        test.equals count, 4
         test.done()
 
-  'have nineteen metrics': (test) ->
+  'have 27 metrics': (test) ->
     new SnapshotParser validJson, (error) ->
       test.ifError(error)
 
       Metric.count (error, count) ->
         test.ifError error
-        test.equals count, 19
+        test.equals count, 27
         test.done()

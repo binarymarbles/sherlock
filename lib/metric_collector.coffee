@@ -1,5 +1,6 @@
 _ = require 'underscore'
 async = require 'async'
+mongoose = require 'mongoose'
 Snapshot = require '../lib/models/snapshot'
 Metric = require '../lib/models/metric'
 
@@ -28,17 +29,26 @@ class MetricCollector
 
       dataSet = {}
 
-      # Define the callback function for async.foreach
-      forEachCallback = (key, callback) =>
-        @findMetricsForKey snapshots, key, (error, metrics) ->
-          console.log 'Found metrics', metrics, 'for key', key, 'and snapshots', snapshots
-          callback()
+      # Build the path match group based on the graph keys.
+      pathMatchers = []
+      for path in @graph.keys
+        matcher = @queryMatcherForPath path
+        pathMatchers.push matcher
 
-      # Find metrics for all keys.
-      async.forEach @graph.keys, forEachCallback, (error) =>
-        console.log 'Completed fetching metrics for', @graph.keys, ':', dataSet
-        console.log 'Error is:', error
-        completedCallback()
+      # Build a Mongoose query to fetch all the relevant metrics, sorted by
+      # the snapshot timestamp ascending.
+      query = Metric.find
+        snapshot:
+          '$in': _.pluck snapshots, 'id'
+        '$or': pathMatchers
+      query = query.asc('snapshot_timestamp')
+      query.run (error, metrics) =>
+        if error?
+          completedCallback error
+
+        else
+          dataSet = @buildDataSet metrics
+          completedCallback null, dataSet
 
   # Find all snapshot IDs for the requested time period matching the specified
   # node.
@@ -50,15 +60,32 @@ class MetricCollector
     query.run (error, docs) ->
       callback docs
 
-  # Find the metrics for the specified key within the collection of snapshots.
-  findMetricsForKey: (snapshots, key, callback) ->
+  # Build a Mongoose OR-query matcher for the specified metric path.
+  queryMatcherForPath: (path) ->
+    if path.indexOf('*') > -1
+      quotedPath = path.replace '.', '\\.'
+      quotedPath = quotedPath.replace '*', '.*?'
+      matcher = new RegExp("^#{quotedPath}$")
+    else
+      matcher = path
 
-    keyFragments = key.split '.'
-    query = Metric.find()
-    query = query.where('snapshot').in _.pluck snapshots, 'id'
-    query = query.where('key', keyFragments)
-    query.run (error, docs) ->
-      console.log 'Found metrics for key', key, ', error=', error, ', docs=', docs
-      callback()
+    { path: matcher }
+
+  # Build a metric data set based on the collection of metric objects.
+  buildDataSet: (metrics) ->
+    dataSet = {}
+
+    for metric in metrics
+
+      path = metric.path
+      timestamp = metric.snapshot_timestamp
+      counter = metric.counter
+
+      dataSet[path] ||= []
+      dataSet[path].push
+        timestamp: timestamp
+        value: counter
+
+    dataSet
 
 module.exports = MetricCollector
