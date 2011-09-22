@@ -1,13 +1,14 @@
 _ = require 'underscore'
 async = require 'async'
 mongoose = require 'mongoose'
+connection = require './db_connection'
 
 config = (require './config').load()
 
-Snapshot = (require './models/snapshot')
-Process = (require './models/process')
-MetricLabel = (require './models/metric_label')
-Metric = (require './models/metric')
+Snapshot = require '../models/snapshot'
+Process = require '../models/process'
+MetricLabel = require '../models/metric_label'
+Metric = require '../models/metric'
 
 class SnapshotParser
 

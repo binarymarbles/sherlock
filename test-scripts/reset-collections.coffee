@@ -2,10 +2,10 @@ async = require 'async'
 mongoose = require 'mongoose'
 connection = require '../lib/db_connection'
 
-Snapshot = require '../lib/models/snapshot'
-Process = require '../lib/models/process'
-MetricLabel = require '../lib/models/metric_label'
-Metric = require '../lib/models/metric'
+Snapshot = require '../models/snapshot'
+Process = require '../models/process'
+MetricLabel = require '../models/metric_label'
+Metric = require '../models/metric'
 
 async.parallel [
     (callback) ->
@@ -19,4 +19,5 @@ async.parallel [
 ], (err, results) ->
 
   console.log 'Collections are reset.'
-  mongoose.disconnect()
+  process.nextTick ->
+    mongoose.disconnect()

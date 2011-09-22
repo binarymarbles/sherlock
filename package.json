@@ -5,11 +5,11 @@
   "dependencies": {
     "express": "2.4.6",
     "sass": ">= 0.0.1",
-    "jade": ">= 0.0.1",
     "underscore": ">= 1.1.7",
     "mongoose": ">= 2.1.4",
     "date-utils": ">= 1.2.4",
-    "async": ">= 0.1.10"
+    "async": ">= 0.1.10",
+    "eco": ">= 1.1.0-rc-1"
   },
   "devDependencies": {
     "nodeunit": ">= 0.5.5",

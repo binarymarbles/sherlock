@@ -6,13 +6,11 @@ mongoose = require 'mongoose'
 configModule = require '../lib/config'
 configModule.setConfigDirectory './test/config'
  
-mongoose.connect 'mongodb://localhost/sherlock_test'
-
 SnapshotParser = require '../lib/snapshot_parser'
-Snapshot = (require '../lib/models/snapshot')
-Process = (require '../lib/models/process')
-MetricLabel = (require '../lib/models/metric_label')
-Metric = (require '../lib/models/metric')
+Snapshot = require '../models/snapshot'
+Process = require '../models/process'
+MetricLabel = require '../models/metric_label'
+Metric = require '../models/metric'
  
 validJson = fs.readFileSync "#{__dirname}/assets/agent_data.json", 'utf-8'
 
@@ -61,11 +59,10 @@ jsonWithEmptyProcesses = JSON.stringify(jsonWithEmptyProcesses)
 
 module.exports = testCase
   setUp: (callback) ->
+    mongoose.connect 'mongodb://localhost/sherlock_test'
     callback()
 
   tearDown: (callback) ->
-
-    # Remove all collections and call the callback.
     async.parallel [
         (callback) ->
           Snapshot.collection.remove callback
@@ -76,7 +73,8 @@ module.exports = testCase
       , (callback) ->
           Metric.collection.remove callback
     ], (err, results) ->
-      callback()
+      mongoose.disconnect (error) ->
+        callback()
 
   'accept valid json data': (test) ->
     new SnapshotParser validJson, (error) ->

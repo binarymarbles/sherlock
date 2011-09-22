@@ -8,19 +8,18 @@ configModule = require '../lib/config'
 configModule.setConfigDirectory './test/config'
 config = configModule.load()
  
-mongoose.connect 'mongodb://localhost/sherlock_test'
-
 SnapshotParser = require '../lib/snapshot_parser'
-Snapshot = (require '../lib/models/snapshot')
-Process = (require '../lib/models/process')
-MetricLabel = (require '../lib/models/metric_label')
-Metric = (require '../lib/models/metric')
+Snapshot = require '../models/snapshot'
+Process = require '../models/process'
+MetricLabel = require '../models/metric_label'
+Metric = require '../models/metric'
 MetricCollector = require '../lib/metric_collector'
 
 json = fs.readFileSync "#{__dirname}/assets/agent_data.json", 'utf-8'
 
 module.exports = testCase
   setUp: (callback) ->
+    mongoose.connect 'mongodb://localhost/sherlock_test'
     new SnapshotParser json, ->
       callback()
 
@@ -37,7 +36,8 @@ module.exports = testCase
       , (callback) ->
           Metric.collection.remove callback
     ], (err, results) ->
-      callback()
+      mongoose.disconnect ->
+        callback()
 
   'construct new metric collector': (test) ->
     collector = new MetricCollector config.nodeById('test1'), config.graphById('load_average')

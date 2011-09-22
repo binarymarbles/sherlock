@@ -2,8 +2,9 @@ require 'date-utils'
 _ = require 'underscore'
 async = require 'async'
 mongoose = require 'mongoose'
-Snapshot = require '../lib/models/snapshot'
-Metric = require '../lib/models/metric'
+
+Snapshot = require '../models/snapshot'
+Metric = require '../models/metric'
 
 # Collects metrics from the database for use in graphs.
 class MetricCollector
