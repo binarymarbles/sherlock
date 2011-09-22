@@ -4,6 +4,7 @@ fs = require 'fs'
 ClientDefinition = require './client_definition'
 ProviderDefinition = require './provider_definition'
 NodeDefinition = require './node_definition'
+GraphDefinition = require './graph_definition'
 
 # Holds the configuration after it's loaded from the configuration files.
 config = null
@@ -21,6 +22,7 @@ class Config
     @readClientConfig()
     @readProviderConfig()
     @readNodeConfig()
+    @readGraphConfig()
 
   # Returns the client matching the specified ID.
   clientById: (id) ->
@@ -41,6 +43,11 @@ class Config
   nodeByHostname: (hostname) ->
     _.first _.select @nodes, (node) =>
       node.hostname == hostname
+
+  # Returns the graph matching the specified ID.
+  graphById: (id) ->
+    _.first _.select @graphs, (graph) =>
+      graph.id == id
 
   # Returns the path to the specified configuration file.
   configFilePath: (filename) ->
@@ -76,6 +83,13 @@ class Config
 
     @readConfig 'nodes',  (nodeJson) =>
       @nodes.push new NodeDefinition @, nodeJson
+
+  # Read the graph configuration file.
+  readGraphConfig: ->
+    @graphs = []
+
+    @readConfig 'graphs', (graphJson) =>
+      @graphs.push new GraphDefinition graphJson
 
 module.exports =
   setConfigDirectory: (path) ->

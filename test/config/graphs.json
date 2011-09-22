@@ -1,0 +1,22 @@
+[
+
+  {
+    "id": "network_traffic",
+    "name": "Network Traffic",
+    "type": "differential",
+    "keys": [
+      "network_interfaces.*.bytes.rx",
+      "network_interfaces.*.bytes.tx"
+    ]
+  },
+
+  {
+    "id": "load_average",
+    "name": "Load Average",
+    "type": "counter",
+    "keys": [
+      "load.average"
+    ]
+  }
+
+]

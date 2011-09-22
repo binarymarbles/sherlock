@@ -60,3 +60,22 @@ module.exports =
     test.equals config.nodes[1].provider.name, 'Test Provider 2'
 
     test.done()
+
+  'load graph configurations': (test) ->
+    config = configModule.load()
+    test.equals config.graphs.length, 2
+
+    test.equals config.graphs[0].id, 'network_traffic'
+    test.equals config.graphs[0].name, 'Network Traffic'
+    test.equals config.graphs[0].type, 'differential'
+    test.equals config.graphs[0].keys.length, 2
+    test.equals config.graphs[0].keys[0], 'network_interfaces.*.bytes.rx'
+    test.equals config.graphs[0].keys[1], 'network_interfaces.*.bytes.tx'
+
+    test.equals config.graphs[1].id, 'load_average'
+    test.equals config.graphs[1].name, 'Load Average'
+    test.equals config.graphs[1].type, 'counter'
+    test.equals config.graphs[1].keys.length, 1
+    test.equals config.graphs[1].keys[0], 'load.average'
+
+    test.done()

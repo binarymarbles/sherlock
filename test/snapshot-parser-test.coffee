@@ -76,7 +76,6 @@ module.exports = testCase
       , (callback) ->
           Metric.collection.remove callback
     ], (err, results) ->
-
       callback()
 
   'accept valid json data': (test) ->
