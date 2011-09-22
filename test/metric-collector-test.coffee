@@ -47,11 +47,14 @@ module.exports = testCase
   'calculate metrics for single-key graph': (test) ->
     collector = new MetricCollector config.nodeById('test1'), config.graphById('load_average')
     collector.metrics (error, dataSet) ->
+      test.ifError error
       test.equals _.keys(dataSet).length, 1
       test.done()
 
   'calculate metrics for multi-key graph': (test) ->
     collector = new MetricCollector config.nodeById('test1'), config.graphById('network_traffic')
     collector.metrics (error, dataSet) ->
+      console.log 'Collected metrics, error=', error, ', dataSet=', dataSet
+      test.ifError error
       test.equals _.keys(dataSet).length, 4
       test.done()

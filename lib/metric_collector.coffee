@@ -1,3 +1,4 @@
+require 'date-utils'
 _ = require 'underscore'
 async = require 'async'
 mongoose = require 'mongoose'
@@ -17,9 +18,7 @@ class MetricCollector
     @fromTime = if fromTime?
       fromTime
     else
-      d = new Date(@toTime.getTime())
-      d.setDate d.getDate() - 6
-      d
+      @toTime.clone().addDays -6
 
   # Build a data set of metrics matching the time period and node.
   metrics: (completedCallback) ->

@@ -1,4 +1,4 @@
-require 'node-date'
+require 'date-utils'
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 

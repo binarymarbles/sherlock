@@ -158,6 +158,7 @@ class SnapshotParser
     snapshot = new Snapshot
       node_id: @json.node
       timestamp: new Date()
+
     snapshot.save (error) ->
       callback error, snapshot
 
@@ -178,7 +179,7 @@ class SnapshotParser
         residental_set_size: processInfo.residental_set_size
         tty: processInfo.tty
         state: processInfo.state
-        started_at: new Date(processInfo.started_at)
+        started_at: new Date processInfo.started_at
         cpu_time: processInfo.cpu_time
         command: processInfo.command
       processModels.push process
@@ -200,7 +201,6 @@ class SnapshotParser
         labelModel = new MetricLabel
           snapshot: @snapshot.id
           snapshot_timestamp: @snapshot.timestamp
-          # path: label.key
           path: label.key.join '.'
           value: label.value
         labelModels.push labelModel
@@ -222,7 +222,6 @@ class SnapshotParser
       metric = new Metric
         snapshot: @snapshot.id
         snapshot_timestamp: @snapshot.timestamp
-        # path: element.key
         path: element.key.join '.'
         counter: element.value
       metricModels.push metric
