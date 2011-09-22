@@ -127,5 +127,46 @@ module.exports = testCase
   'store snapshot without failing': (test) ->
     parser = new SnapshotParser validJson
     test.doesNotThrow ->
-      parser.storeSnapshot()
-    test.done()
+      parser.storeSnapshot (error) ->
+        test.ifError error
+        test.done()
+
+  'have one snapshot': (test) ->
+    parser = new SnapshotParser validJson
+    parser.storeSnapshot (error) ->
+      test.ifError(error)
+
+      Snapshot.count (error, count) ->
+        test.ifError error
+        test.equals count, 1
+        test.done()
+
+  'have two processes': (test) ->
+    parser = new SnapshotParser validJson
+    parser.storeSnapshot (error) ->
+      test.ifError(error)
+
+      Process.count (error, count) ->
+        test.ifError error
+        test.equals count, 2
+        test.done()
+
+  'have three labels': (test) ->
+    parser = new SnapshotParser validJson
+    parser.storeSnapshot (error) ->
+      test.ifError(error)
+
+      MetricLabel.count (error, count) ->
+        test.ifError error
+        test.equals count, 3
+        test.done()
+
+  'have nineteen metrics': (test) ->
+    parser = new SnapshotParser validJson
+    parser.storeSnapshot (error) ->
+      test.ifError(error)
+
+      Metric.count (error, count) ->
+        test.ifError error
+        test.equals count, 19
+        test.done()

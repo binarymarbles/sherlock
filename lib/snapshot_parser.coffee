@@ -1,4 +1,5 @@
 _ = require 'underscore'
+async = require 'async'
 mongoose = require 'mongoose'
 
 config = (require './config').load()
@@ -14,6 +15,7 @@ class SnapshotParser
     @json = JSON.parse(rawJson)
     @validateJson()
     @flattenData()
+    @extractLabels()
 
   # Validate the contents of the JSON data structure.
   validateJson: ->
@@ -73,29 +75,77 @@ class SnapshotParser
 
     walk [], @json.data
 
+  # Extract labels from the data array and place them in its own array.
+  # Find the label information from the @data list and add them to the @label
+  # array, while removing all label information from the @data list.
+  extractLabels: ->
+    @labels = []
+
+    # Holds a list of index positions in the @data array where labels are
+    # stored, since we need to remove them after we're done processing them.
+    labelIndexes = []
+    for dataIndex in [0 .. @data.length - 1]
+
+      key = @data[dataIndex].key
+      value = @data[dataIndex].value
+
+      if _.include key, 'labels'
+
+        labelIndexes.push dataIndex
+
+        @labels.push
+          key: key
+          value: value
+
+    # Remove the identified label indexes from the data array.
+    for labelIndex in labelIndexes.reverse()
+      @data.splice labelIndex, 1
+
   # Store the snapshot data in the database.
-  storeSnapshot: ->
-    @snapshot = @writeSnapshot()
+  storeSnapshot: (callback) ->
 
-    # Store all the processes
-    @writeProcesses()
+    callback = callback || ->
 
-    # Extract and store all the labels in the JSON structure.
-    @extractAndWriteLabels()
+    @writeSnapshot (error, snapshot) =>
 
-    # Write the metrics found in the JSON structure.
-    @writeMetrics()
+      if error?
+        callback error
+      else
+
+        @snapshot = snapshot
+
+        # Store all snapshot meta data in parallel.
+        async.parallel [
+
+          # Store all the processes.
+          (callback) =>
+            @writeProcesses callback
+          ,
+
+          # Store all the labels.
+          (callback) =>
+            @writeLabels callback
+          ,
+
+          # Store all the metrics.
+          (callback) =>
+            @writeMetrics callback
+
+        ], (err, result) ->
+          callback err
 
   # Create a snapshot instance for the JSON data.
-  writeSnapshot: ->
+  writeSnapshot: (callback) ->
     snapshot = new Snapshot
       node_id: @json.node
       timestamp: new Date()
-    snapshot.save()
-    snapshot
+    snapshot.save (error) ->
+      callback error, snapshot
 
   # Write the process list to the snapshot instance for the JSON data.
-  writeProcesses: ->
+  writeProcesses: (callback) ->
+
+    processModels = []
     for processInfo in @json.processes
 
       process = new Process
@@ -111,47 +161,54 @@ class SnapshotParser
         started_at: new Date(processInfo.started_at)
         cpu_time: processInfo.cpu_time
         command: processInfo.command
-      process.save (error) ->
-        if error?
-          throw new Error error
+      processModels.push process
 
-  # Find the label information from the @data list and remove them, while
-  # writing the label information to the database.
-  extractAndWriteLabels: ->
+    # Save all the process models in parallel.
+    async.forEach processModels,
+      (processModel, modelCallback) ->
+        processModel.save modelCallback
+      ,
+      (error) ->
+        callback error, processModels
 
-    # Holds a list of index positions in the @data array where labels are
-    # stored, since we need to remove them after we're done processing them.
-    labelIndexes = []
-    for dataIndex in [0 .. @data.length - 1]
+  # Write the labels to the snapshot instance.
+  writeLabels: (callback) ->
 
-      key = @data[dataIndex].key
-      value = @data[dataIndex].value
+    labelModels = []
+    for label in @labels
 
-      if _.include key, 'labels'
-        labelIndexes.push dataIndex
-
-        label = new MetricLabel
+        labelModel = new MetricLabel
           snapshot: @snapshot._id
-          path: key
-          value: value
-        label.save (error) ->
-          if error?
-            throw new Error error
+          path: label.key
+          value: label.value
+        labelModels.push labelModel
 
-    # Remove the identified label indexes from the data array.
-    for labelIndex in labelIndexes.reverse()
-      @data.splice labelIndex, 1
+    # Save all the label models in parallel.
+    async.forEach labelModels,
+      (labelModel, modelCallback) ->
+        labelModel.save modelCallback
+      ,
+      (error) ->
+        callback error, labelModels
 
   # Write the metrics found in the JSON data structure.
-  writeMetrics: ->
+  writeMetrics: (callback) ->
+
+    metricModels = []
     for element in @data
 
       metric = new Metric
         snapshot: @snapshot._id
         path: element.key
         counter: element.value
-      metric.save (error) ->
-        if error?
-          throw new Error error
+      metricModels.push metric
+
+    # Save all the metric models in parallel.
+    async.forEach metricModels,
+      (metricModel, modelCallback) ->
+        metricModel.save modelCallback
+      ,
+      (error) ->
+        callback error, metricModels
 
 module.exports = SnapshotParser
