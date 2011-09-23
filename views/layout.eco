@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Sherlock Infrastructure Monitoring</title>
+    <link href="/stylesheets/application.css" media="screen,projection" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/javascripts/jquery.js"></script>
+    <script type="text/javascript" src="/javascripts/underscore.js"></script>
+    <script type="text/javascript" src="/javascripts/highcharts.js"></script>
+  </head>
+  <body>
+
+    <nav id="primary-nav">
+      <ul>
+        <li><a href="/">Dashboard</a></li>
+        <li><a href="/nodes">Nodes</a></li>
+        <li><a href="#">Alerts</a></li>
+      </ul>
+    </nav>
+
+    <%- @body %>
+
+  </body>
+</html>

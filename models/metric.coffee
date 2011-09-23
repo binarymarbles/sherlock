@@ -10,9 +10,9 @@ metricSchema = new Schema
   snapshot_timestamp:
     type: Date
     required: true
+    index: true
 
   path:
-    # type: [String]
     type: String
     required: true
 
@@ -21,6 +21,14 @@ metricSchema = new Schema
     required: true
     default: 0
 
-mongoose.model 'Metric', metricSchema
+# Add a unique compound index on snapshot and path.
+metricSchema.index(
+  {
+    snapshot: 1,
+    path: 1
+  },
+  { unique: true }
+)
 
+mongoose.model 'Metric', metricSchema
 module.exports = mongoose.model 'Metric'

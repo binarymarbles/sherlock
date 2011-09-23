@@ -11,9 +11,9 @@ metricLabelSchema = new Schema(
     snapshot_timestamp:
       type: Date
       required: true
+      index: true
 
     path:
-      # type: [String]
       type: String
       required: true
 
@@ -26,6 +26,14 @@ metricLabelSchema = new Schema(
   }
 )
 
-mongoose.model 'MetricLabel', metricLabelSchema
+# Add a unique compound index on snapshot and path.
+metricLabelSchema.index(
+  {
+    snapshot: 1,
+    path: 1
+  },
+  { unique: true }
+)
 
+mongoose.model 'MetricLabel', metricLabelSchema
 module.exports = mongoose.model 'MetricLabel'

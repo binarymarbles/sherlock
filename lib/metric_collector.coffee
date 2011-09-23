@@ -14,12 +14,13 @@ class MetricCollector
     @node = node
     @graph = graph
 
-    @toTime = fromTime || new Date()
+    @toTime = fromTime || new Date().addDays(-1)
 
     @fromTime = if fromTime?
       fromTime
     else
-      @toTime.clone().addDays -6
+      @toTime.clone().addDays -1
+      # @toTime.clone().addHours -2
 
   # Build a data set of metrics matching the time period and node.
   metrics: (completedCallback) ->

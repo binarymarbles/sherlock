@@ -6,10 +6,12 @@ processSchema = new Schema
   snapshot:
     type: Schema.ObjectId
     required: true
+    index: true
 
   snapshot_timestamp:
     type: Date
     required: true
+    index: true
 
   user: String
   pid: Number
@@ -24,6 +26,4 @@ processSchema = new Schema
   command: String
 
 mongoose.model 'Process', processSchema
-
 module.exports = mongoose.model 'Process'
-

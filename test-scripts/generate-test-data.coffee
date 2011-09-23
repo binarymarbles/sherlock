@@ -131,35 +131,35 @@ class TestDataSeeder
       snapshot: snapshot.id
       snapshot_timestamp: snapshot.timestamp
       path: 'load.average'
-      value: Math.random().toFixed 2
+      counter: Math.random().toFixed 2
     metricModels.push loadAverage
 
     eth0RxBytes = new Metric
       snapshot: snapshot.id
       snapshot_timestamp: snapshot.timestamp
       path: 'network_interfaces.eth0.bytes.rx'
-      value: timestamp.valueOf()
+      counter: timestamp.valueOf()
     metricModels.push eth0RxBytes
 
     eth0TxBytes = new Metric
       snapshot: snapshot.id
       snapshot_timestamp: snapshot.timestamp
       path: 'network_interfaces.eth0.bytes.tx'
-      value: timestamp.valueOf() / 2
+      counter: timestamp.valueOf() / 2
     metricModels.push eth0TxBytes
 
     eth1RxBytes = new Metric
       snapshot: snapshot.id
       snapshot_timestamp: snapshot.timestamp
       path: 'network_interfaces.eth1.bytes.rx'
-      value: timestamp.valueOf() * 3
+      counter: timestamp.valueOf() * 3
     metricModels.push eth1RxBytes
 
     eth1TxBytes = new Metric
       snapshot: snapshot.id
       snapshot_timestamp: snapshot.timestamp
       path: 'network_interfaces.eth1.bytes.tx'
-      value: timestamp.valueOf() * 2
+      counter: timestamp.valueOf() * 2
     metricModels.push eth1TxBytes
 
     metricModels

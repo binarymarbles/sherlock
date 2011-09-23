@@ -1,0 +1,43 @@
+<div id="graph"></div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+  var chart = new Highcharts.Chart({
+    chart: {
+      renderTo: 'graph',
+      type: 'line'
+    },
+    title: {
+      text: '<%= @graph.name  %> for <%= @node.hostname %>'
+    },
+    xAxis: {
+      type: 'datetime'
+    },
+    yAxis: {
+      title: {
+        text: '<%= @graph.name %>'
+      },
+      min: 0
+    },
+    series: [
+      <% for metricName, metrics of @metrics: %>
+        {
+          name: '<%= metricName %>',
+          lineWidth: 1,
+          marker: {
+            radius: 1
+          },
+          data: [
+            <% for metric in metrics: %>
+            [Date.UTC(<%= metric.timestamp.getFullYear() %>, <%= metric.timestamp.getMonth() %>, <%= metric.timestamp.getDay() %>, <%= metric.timestamp.getHours() %>, <%= metric.timestamp.getMinutes() %>, <%= metric.timestamp.getSeconds() %>), <%= metric.value %>],
+            <% end %>
+          ]
+        },
+      <% end %>
+    ]
+  });
+  console.log('Chart:', chart);
+
+});
+</script>
