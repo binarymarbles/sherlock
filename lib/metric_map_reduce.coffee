@@ -153,7 +153,8 @@ class MetricMapReduce
   # Finalize the data yielded by the mapreduce operation, calculating the
   # averages for each metric.
   @finalizeFunction: (key, value) ->
-    value.counter = value.counter / value.metric_count
+    if value.metric_count > 1
+      value.counter = value.counter / value.metric_count
     value
 
 module.exports = MetricMapReduce

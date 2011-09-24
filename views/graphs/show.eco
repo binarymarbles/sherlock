@@ -23,7 +23,7 @@ $(document).ready(function() {
     series: [
       <% for metricName, metrics of @metrics: %>
         {
-          name: '<%= metricName %>',
+          name: '<%= @metricLabels[metricName] %>',
           lineWidth: 1,
           marker: {
             radius: 1

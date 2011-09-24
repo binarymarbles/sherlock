@@ -37,7 +37,16 @@ module.exports = (app) ->
       if error?
         throw new Error(error.message)
       else
+
+        # Prepare a set of labels for all metrics.
+        labels = {}
+        for path, metrics of dataSet
+          labels[path] = req.graph.labelForPath(path)
+
+        console.log 'Labels:', labels
+
         res.render 'graphs/show',
           node: req.node
           graph: req.graph
           metrics: dataSet
+          metricLabels: labels

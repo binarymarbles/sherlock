@@ -21,7 +21,7 @@ processSchema = new Schema
   residental_set_size: Number
   tty: String
   state: String
-  started_at: Date
+  started_at: String
   cpu_time: String
   command: String
 

@@ -9,10 +9,10 @@ module.exports = (app) ->
       if error?
         console.log 'Handling watson snapshot failed, error is', error.message
         res.writeHead 422, 'Content-Type': 'text/plain'
-        res.end "ERROR: #{error.message}"
+        res.end error.message
 
       else
 
         console.log 'Successfully handled Watson snapshot, stored with ID', snapshot.id, 'and key', snapshot.key
         res.writeHead 200, 'Content-Type': 'text/plain'
-        res.end "OK: #{snapshot.id}"
+        res.end snapshot.id

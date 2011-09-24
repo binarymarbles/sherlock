@@ -17,12 +17,12 @@ class MetricCollector
     @node = node
     @graph = graph
 
-    # If no from/to time is specified, we default to the last 24 hours.
+    # If no from/to time is specified, we default to the last 12 hours.
     @toTime = fromTime || new Date()
     @fromTime = if fromTime?
       fromTime
     else
-      @toTime.clone().addDays -1 # 
+      @toTime.clone().addHours -12
 
     # Figure out the number of hours and the number of days between our from and
     # to time.
@@ -36,7 +36,7 @@ class MetricCollector
 
     # Build the path match group based on the graph keys.
     pathMatchers = []
-    for path in @graph.keys
+    for path, label of @graph.keys
       matcher = @queryMatcherForPath path
       pathMatchers.push matcher
 
