@@ -118,11 +118,26 @@ class MetricCollector
   buildDataSet: (metrics) ->
     dataSet = {}
 
+    previousCounter = null
     for metric in metrics
 
       path = metric.value.path
       timestamp = metric.value.timestamp
-      counter = metric.value.counter
+      originalCounter = metric.value.counter
+
+      # If this is a differential graph, calculate the difference between
+      # previousCounter and counter and use that as the value. If we have no
+      # previous counter, use 0.
+      if @graph.type == 'differential'
+        if previousCounter == null
+          counter = 0
+        else
+          counter = originalCounter - previousCounter
+
+      else
+        counter = originalCounter
+
+      previousCounter = originalCounter
 
       dataSet[path] ||= []
       dataSet[path].push
