@@ -7,7 +7,9 @@ module.exports = (app) ->
     new SnapshotParser req.body, (error, snapshot) ->
 
       if error?
-        console.log 'Handling watson snapshot failed, error is', error.message
+        console.log 'Handling watson snapshot failed:', error.message
+        console.log 'JSON snapshot:'
+        console.log req.body
         res.writeHead 422, 'Content-Type': 'text/plain'
         res.end error.message
 
