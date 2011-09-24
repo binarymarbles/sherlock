@@ -43,8 +43,6 @@ module.exports = (app) ->
         for path, metrics of dataSet
           labels[path] = req.graph.labelForPath(path)
 
-        console.log 'Labels:', labels
-
         res.render 'graphs/show',
           node: req.node
           graph: req.graph
