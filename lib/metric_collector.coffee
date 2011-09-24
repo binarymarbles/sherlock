@@ -76,8 +76,6 @@ class MetricCollector
       out:
         replace: collectionName
 
-    console.log 'Mapreduce command:', command
-
     # Execute the mapreduce command.
     mongoose.connection.db.executeDbCommand command, (error, dbResults) =>
 
