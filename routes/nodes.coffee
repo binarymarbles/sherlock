@@ -37,7 +37,6 @@ module.exports = (app) ->
       if error?
         throw new Error(error.message)
       else
-        console.log dataSet
         res.render 'graphs/show',
           node: req.node
           graph: req.graph

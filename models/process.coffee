@@ -8,7 +8,7 @@ processSchema = new Schema
     required: true
     index: true
 
-  snapshot_timestamp:
+  timestamp:
     type: Date
     required: true
     index: true

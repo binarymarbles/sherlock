@@ -89,7 +89,7 @@ class TestDataSeeder
 
     process = new Process
       snapshot: snapshot.id
-      snapshot_timestamp: timestamp
+      timestamp: timestamp
       user: randomUsernames[Math.floor(Math.random() * randomUsernames.length)]
       pid: Math.floor(Math.random() * 10000) + 1
       cpu_usage: Math.floor(Math.random() * 100)
@@ -109,14 +109,16 @@ class TestDataSeeder
 
     eth0Label = new MetricLabel
       snapshot: snapshot.id
-      snapshot_timestamp: snapshot.timestamp
+      node_id: snapshot.node_id
+      timestamp: snapshot.timestamp
       path: 'network_interfaces.eth0.labels.ipv4_address'
       value: '10.0.0.1'
     labelModels.push eth0Label
 
     eth1Label = new MetricLabel
       snapshot: snapshot.id
-      snapshot_timestamp: snapshot.timestamp
+      node_id: snapshot.node_id
+      timestamp: snapshot.timestamp
       path: 'network_interfaces.eth1.labels.ipv4_address'
       value: '192.168.0.1'
     labelModels.push eth1Label
@@ -129,35 +131,40 @@ class TestDataSeeder
 
     loadAverage = new Metric
       snapshot: snapshot.id
-      snapshot_timestamp: snapshot.timestamp
+      node_id: snapshot.node_id
+      timestamp: snapshot.timestamp
       path: 'load.average'
       counter: Math.random().toFixed 2
     metricModels.push loadAverage
 
     eth0RxBytes = new Metric
       snapshot: snapshot.id
-      snapshot_timestamp: snapshot.timestamp
+      node_id: snapshot.node_id
+      timestamp: snapshot.timestamp
       path: 'network_interfaces.eth0.bytes.rx'
       counter: timestamp.valueOf()
     metricModels.push eth0RxBytes
 
     eth0TxBytes = new Metric
       snapshot: snapshot.id
-      snapshot_timestamp: snapshot.timestamp
+      node_id: snapshot.node_id
+      timestamp: snapshot.timestamp
       path: 'network_interfaces.eth0.bytes.tx'
       counter: timestamp.valueOf() / 2
     metricModels.push eth0TxBytes
 
     eth1RxBytes = new Metric
       snapshot: snapshot.id
-      snapshot_timestamp: snapshot.timestamp
+      node_id: snapshot.node_id
+      timestamp: snapshot.timestamp
       path: 'network_interfaces.eth1.bytes.rx'
       counter: timestamp.valueOf() * 3
     metricModels.push eth1RxBytes
 
     eth1TxBytes = new Metric
       snapshot: snapshot.id
-      snapshot_timestamp: snapshot.timestamp
+      node_id: snapshot.node_id
+      timestamp: snapshot.timestamp
       path: 'network_interfaces.eth1.bytes.tx'
       counter: timestamp.valueOf() * 2
     metricModels.push eth1TxBytes

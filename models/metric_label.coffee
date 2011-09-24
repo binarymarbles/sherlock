@@ -8,10 +8,13 @@ metricLabelSchema = new Schema(
       type: Schema.ObjectId
       required: true
 
-    snapshot_timestamp:
+    node_id:
+      type: String
+      required: true
+
+    timestamp:
       type: Date
       required: true
-      index: true
 
     path:
       type: String
@@ -34,6 +37,11 @@ metricLabelSchema.index(
   },
   { unique: true }
 )
+
+# Add a compound index on node id and timestamp.
+metricLabelSchema.index
+  node_id: 1
+  timestamp: 1
 
 mongoose.model 'MetricLabel', metricLabelSchema
 module.exports = mongoose.model 'MetricLabel'

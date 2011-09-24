@@ -7,10 +7,13 @@ metricSchema = new Schema
     type: Schema.ObjectId
     required: true
 
-  snapshot_timestamp:
+  node_id:
+    type: String
+    required: true
+
+  timestamp:
     type: Date
     required: true
-    index: true
 
   path:
     type: String
@@ -29,6 +32,11 @@ metricSchema.index(
   },
   { unique: true }
 )
+
+# Add a compound index on node id and timestamp.
+metricSchema.index
+  node_id: 1
+  timestamp: 1
 
 mongoose.model 'Metric', metricSchema
 module.exports = mongoose.model 'Metric'

@@ -1,7 +1,6 @@
 _ = require 'underscore'
 async = require 'async'
 mongoose = require 'mongoose'
-connection = require './db_connection'
 
 config = (require './config').load()
 
@@ -171,7 +170,7 @@ class SnapshotParser
 
       process = new Process
         snapshot: @snapshot.id
-        snapshot_timestamp: @snapshot.timestamp
+        timestamp: @snapshot.timestamp
         user: processInfo.user
         pid: processInfo.pid
         cpu_usage: processInfo.cpu
@@ -201,7 +200,8 @@ class SnapshotParser
 
         labelModel = new MetricLabel
           snapshot: @snapshot.id
-          snapshot_timestamp: @snapshot.timestamp
+          node_id: @snapshot.node_id
+          timestamp: @snapshot.timestamp
           path: label.key.join '.'
           value: label.value
         labelModels.push labelModel
@@ -222,7 +222,8 @@ class SnapshotParser
 
       metric = new Metric
         snapshot: @snapshot.id
-        snapshot_timestamp: @snapshot.timestamp
+        node_id: @snapshot.node_id
+        timestamp: @snapshot.timestamp
         path: element.key.join '.'
         counter: element.value
       metricModels.push metric
