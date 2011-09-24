@@ -4,7 +4,7 @@ module.exports = (app) ->
 
   # URL used by Watson agents to post snapshot information to Sherlock.
   app.post '/watson/snapshot', (req, res) ->
-    new SnapshotParser req.body.payload, (error, snapshot) ->
+    new SnapshotParser req.body, (error, snapshot) ->
 
       if error?
         console.log 'Handling watson snapshot failed, error is', error.message

@@ -11,16 +11,10 @@ Metric = require '../models/metric'
 
 class SnapshotParser
 
-  constructor: (rawJson, callback) ->
+  constructor: (json, callback) ->
 
     callback = callback || (error) ->
-
-    # Parse the JSON.
-    try
-      @json = JSON.parse(rawJson)
-    catch error
-      callback error
-      return
+    @json = json
 
     # Validate the JSON data.
     try
