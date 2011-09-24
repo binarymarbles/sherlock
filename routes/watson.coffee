@@ -8,8 +8,6 @@ module.exports = (app) ->
 
       if error?
         console.log 'Handling watson snapshot failed:', error.message
-        console.log 'JSON snapshot:'
-        console.log req.body
         res.writeHead 422, 'Content-Type': 'text/plain'
         res.end error.message
 

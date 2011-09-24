@@ -154,6 +154,8 @@ class SnapshotParser
       timestamp: new Date()
 
     snapshot.save (error) ->
+      if error?
+        console.log 'Validation failed on snapshot', snapshot, ':', error
       callback error, snapshot
 
   # Write the process list to the snapshot instance for the JSON data.
@@ -181,7 +183,10 @@ class SnapshotParser
     # Save all the process models in parallel.
     async.forEach processModels,
       (processModel, modelCallback) ->
-        processModel.save modelCallback
+        processModel.save (errors) ->
+          if errors?
+            console.log 'Validation failed on process', processModel, ':', errors
+          modelCallback errors
       ,
       (error) ->
         callback error, processModels
@@ -203,7 +208,10 @@ class SnapshotParser
     # Save all the label models in parallel.
     async.forEach labelModels,
       (labelModel, modelCallback) ->
-        labelModel.save modelCallback
+        labelModel.save (errors) ->
+          if errors?
+            console.log 'Validation failed on metric label', labelModel, ':', errors
+          modelCallback errors
       ,
       (error) ->
         callback error, labelModels
@@ -225,7 +233,10 @@ class SnapshotParser
     # Save all the metric models in parallel.
     async.forEach metricModels,
       (metricModel, modelCallback) ->
-        metricModel.save modelCallback
+        metricModel.save (errors) ->
+          if errors?
+            console.log 'Validation failed on metric', metricModel, ':', errors
+          modelCallback errors
       ,
       (error) ->
         callback error, metricModels
