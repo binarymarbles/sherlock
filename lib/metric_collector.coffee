@@ -12,13 +12,23 @@ Metric = require '../models/metric'
 # Collects metrics from the database for use in graphs.
 class MetricCollector
 
-  constructor: (node, graph, fromTime, toTime) ->
+  constructor: (node_id, paths, type, fromTime, toTime) ->
 
-    @node = node
-    @graph = graph
+    @node_id = node_id
+    @paths = paths
+
+    # If the type attribute is an object, and fromTime is an object or blank,
+    # and toTime is blank - no type was passed in. Shift the attributes one
+    # place right and set type to be null.
+    if typeof(type) == 'object' && (typeof(fromTime) == 'object' || !fromTime?) && !toTime?
+      toTime = fromTime
+      fromTime = type
+      type = null
+
+    @type = type || 'counter'
 
     # If no from/to time is specified, we default to the last 12 hours.
-    @toTime = fromTime || new Date()
+    @toTime = toTime || new Date()
     @fromTime = if fromTime?
       fromTime
     else
@@ -31,12 +41,12 @@ class MetricCollector
 
   # Build a data set of metrics matching the time period and node.
   metrics: (completedCallback) ->
-
+    
     dataSet = {}
 
     # Build the path match group based on the graph keys.
     pathMatchers = []
-    for path, label of @graph.keys
+    for path in @paths
       matcher = @queryMatcherForPath path
       pathMatchers.push matcher
 
@@ -63,7 +73,7 @@ class MetricCollector
     command =
       mapreduce: 'metrics'
       query:
-        node_id: @node.id
+        node_id: @node_id
         timestamp:
           '$gte': @fromTime
           '$lte': @toTime
@@ -125,14 +135,21 @@ class MetricCollector
       timestamp = metric.value.timestamp
       originalCounter = metric.value.counter
 
-      # If this is a differential graph, calculate the difference between
+      # If this is a incremental graph, calculate the difference between
       # previousCounter and counter and use that as the value. If we have no
       # previous counter, use 0.
-      if @graph.type == 'differential'
+      if @type == 'incremental'
         if previousCounter == null
           counter = 0
         else
+
           counter = originalCounter - previousCounter
+
+          # If we get a negative value after calculating the incremental value,
+          # the counter has been reset and we should handle this properly. Here,
+          # we return the original counter value and start off at 0.
+          if counter < 0
+            counter = originalCounter
 
       else
         counter = originalCounter

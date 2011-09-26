@@ -12,8 +12,9 @@ class MetricMapReduce
   @fiveMinuteAverageMapFunction: ->
     timestamp = @timestamp
     minutes = (5 * Math.floor(timestamp.getMinutes() / 5))
-    timestamp.setMinutes(minutes)
-    timestamp.setSeconds(0)
+    timestamp.setMinutes minutes
+    timestamp.setSeconds 0
+    timestamp.setMilliseconds 0
 
     emit {path: @path, timestamp: timestamp},
       path: @path
@@ -26,6 +27,7 @@ class MetricMapReduce
     timestamp = @timestamp
     timestamp.setMinutes 0
     timestamp.setSeconds 0
+    timestamp.setMilliseconds 0
 
     emit {path: @path, timestamp: timestamp},
       path: @path
@@ -54,6 +56,7 @@ class MetricMapReduce
     timestamp.setHours hours
     timestamp.setMinutes 0
     timestamp.setSeconds 0
+    timestamp.setMilliseconds 0
 
     emit {path: @path, timestamp: timestamp},
       path: @path
@@ -67,6 +70,7 @@ class MetricMapReduce
     timestamp.setHours 0
     timestamp.setMinutes 0
     timestamp.setSeconds 0
+    timestamp.setMilliseconds 0
 
     emit {path: @path, timestamp: timestamp},
       path: @path
@@ -90,6 +94,7 @@ class MetricMapReduce
     timestamp.setHours 0
     timestamp.setMinutes 0
     timestamp.setSeconds 0
+    timestamp.setMilliseconds 0
 
     emit {path: @path, timestamp: timestamp},
       path: @path
@@ -113,6 +118,7 @@ class MetricMapReduce
     timestamp.setHours 0
     timestamp.setMinutes 0
     timestamp.setSeconds 0
+    timestamp.setMilliseconds 0
 
     emit {path: @path, timestamp: timestamp},
       path: @path
@@ -144,7 +150,9 @@ class MetricMapReduce
       counter: 0
       metric_count: 0
 
+    print "Reducing data set for path " + key.path + " and timestamp " + key.timestamp + " containing " + values.length + " values"
     values.forEach (value) ->
+      print "  - Handling value with timestamp " + value.timestamp + " and counter " + value.counter
       result.counter += value.counter
       result.metric_count += 1
 

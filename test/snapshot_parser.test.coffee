@@ -1,80 +1,61 @@
 testCase = (require 'nodeunit').testCase
 fs = require 'fs'
-async = require 'async'
 mongoose = require 'mongoose'
+_ = require 'underscore'
 
-configModule = require '../lib/config'
-configModule.setConfigDirectory './test/config'
- 
+TestHelper = require './test_helper'
+
 SnapshotParser = require '../lib/snapshot_parser'
 Snapshot = require '../models/snapshot'
 Process = require '../models/process'
 MetricLabel = require '../models/metric_label'
 Metric = require '../models/metric'
  
-validJson = fs.readFileSync "#{__dirname}/assets/agent_data.json", 'utf-8'
+validJson = JSON.parse(fs.readFileSync "#{__dirname}/assets/agent_data.json", 'utf-8')
 
 #
 # Build some invalid JSON structures to use in the tests.
 #
 # Missing "node" element.
-jsonWithoutNode = JSON.parse(validJson)
+jsonWithoutNode = _.clone validJson
 delete jsonWithoutNode.node
-jsonWithoutNode = JSON.stringify(jsonWithoutNode)
 
 # Invalid "node" element.
-jsonWithInvalidNode = JSON.parse(validJson)
+jsonWithInvalidNode = _.clone validJson
 jsonWithInvalidNode.node = 'invalid'
-jsonWithInvalidNode = JSON.stringify(jsonWithInvalidNode)
 
 # Missing agent version.
-jsonWithoutAgentVersion = JSON.parse(validJson)
+jsonWithoutAgentVersion = _.clone validJson
 delete jsonWithoutAgentVersion.agent_version
-jsonWithoutAgentVersion = JSON.stringify(jsonWithoutAgentVersion)
 
 # Invalid agent version.
-jsonWithInvalidAgentVersion = JSON.parse(validJson)
+jsonWithInvalidAgentVersion = _.clone validJson
 jsonWithInvalidAgentVersion.agent_version = 'invalid'
-jsonWithInvalidAgentVersion = JSON.stringify(jsonWithInvalidAgentVersion)
 
 # Missing data.
-jsonWithoutData = JSON.parse(validJson)
+jsonWithoutData = _.clone validJson
 delete jsonWithoutData.data
-jsonWithoutData = JSON.stringify(jsonWithoutData)
 
 # Missing processes.
-jsonWithoutProcesses = JSON.parse(validJson)
+jsonWithoutProcesses = _.clone validJson
 delete jsonWithoutProcesses.processes
-jsonWithoutProcesses = JSON.stringify(jsonWithoutProcesses)
 
 # Invalid processes.
-jsonWithInvalidProcesses = JSON.parse(validJson)
+jsonWithInvalidProcesses = _.clone validJson
 jsonWithInvalidProcesses.processes = 'invalid'
-jsonWithInvalidProcesses = JSON.stringify(jsonWithInvalidProcesses)
 
 # Empty processes.
-jsonWithEmptyProcesses = JSON.parse(validJson)
+jsonWithEmptyProcesses = _.clone validJson
 jsonWithEmptyProcesses.processes = []
-jsonWithEmptyProcesses = JSON.stringify(jsonWithEmptyProcesses)
 
 module.exports = testCase
   setUp: (callback) ->
-    mongoose.connect 'mongodb://localhost/sherlock_test'
+    TestHelper.connectToDatabase()
     callback()
 
   tearDown: (callback) ->
-    async.parallel [
-        (callback) ->
-          Snapshot.collection.remove callback
-      , (callback) ->
-          Process.collection.remove callback
-      , (callback) ->
-          MetricLabel.collection.remove callback
-      , (callback) ->
-          Metric.collection.remove callback
-    ], (err, results) ->
-      mongoose.disconnect (error) ->
-        callback()
+    TestHelper.resetCollections ->
+      TestHelper.disconnectFromDatabase callback
 
   'accept valid json data': (test) ->
     new SnapshotParser validJson, (error) ->
