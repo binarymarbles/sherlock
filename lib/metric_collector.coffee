@@ -101,22 +101,22 @@ class MetricCollector
   buildDataSet: (metrics) ->
     dataSet = {}
 
-    previousCounter = null
+    previousCounters = {}
     for metric in metrics
 
       path = metric.path
       timestamp = metric.timestamp
       originalCounter = metric.counter
 
+      previousCounters[path] ||= null
+      
       # If this is a incremental graph, calculate the difference between
       # previousCounter and counter and use that as the value. If we have no
       # previous counter, use 0.
       if @type == 'incremental'
-        if previousCounter == null
-          counter = 0
-        else
+        if previousCounters[path]?
 
-          counter = originalCounter - previousCounter
+          counter = originalCounter - previousCounters[path]
 
           # If we get a negative value after calculating the incremental value,
           # the counter has been reset and we should handle this properly. Here,
@@ -124,10 +124,13 @@ class MetricCollector
           if counter < 0
             counter = originalCounter
 
+        else
+          counter = 0
+
       else
         counter = originalCounter
 
-      previousCounter = originalCounter
+      previousCounters[path] = originalCounter
 
       dataSet[path] ||= []
       dataSet[path].push
