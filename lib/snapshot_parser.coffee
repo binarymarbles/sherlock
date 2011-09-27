@@ -1,9 +1,9 @@
 _ = require 'underscore'
 async = require 'async'
 mongoose = require 'mongoose'
-
+ 
 config = (require './config').load()
-
+ 
 Snapshot = require '../models/snapshot'
 Process = require '../models/process'
 MetricLabel = require '../models/metric_label'

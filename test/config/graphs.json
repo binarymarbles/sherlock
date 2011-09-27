@@ -3,7 +3,7 @@
   {
     "id": "network_traffic",
     "name": "Network Traffic",
-    "type": "differential",
+    "type": "incremental",
     "keys": [
       "network_interfaces.*.bytes.rx",
       "network_interfaces.*.bytes.tx"

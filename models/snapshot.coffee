@@ -19,7 +19,7 @@ snapshotSchema = new Schema
 
 # Add a pre-save hook to define the key of the snapshot.
 snapshotSchema.pre 'save', (next) ->
-  @key = "#{@node_id}:#{@timestamp.toFormat('YYYY-MM-DD-HH24-MI-SS')}"
+  @key = "#{@node_id}:#{@timestamp.toFormat('YYYYMMDDHH24MISS')}"
   next()
 
 # Add a unique compound index on node_id and timestamp.

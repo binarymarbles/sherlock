@@ -32,7 +32,7 @@ module.exports = (app) ->
 
   # Shows a graph for a node.
   app.get '/nodes/:node_id/:graph_id', (req, res) ->
-    collector = new MetricCollector req.node, req.graph
+    collector = new MetricCollector req.node.id, req.graph.paths()
     collector.metrics (error, dataSet) ->
       if error?
         throw new Error(error.message)

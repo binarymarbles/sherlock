@@ -67,7 +67,7 @@ module.exports =
 
     test.equals config.graphs[0].id, 'network_traffic'
     test.equals config.graphs[0].name, 'Network Traffic'
-    test.equals config.graphs[0].type, 'differential'
+    test.equals config.graphs[0].type, 'incremental'
     test.equals config.graphs[0].keys.length, 2
     test.equals config.graphs[0].keys[0], 'network_interfaces.*.bytes.rx'
     test.equals config.graphs[0].keys[1], 'network_interfaces.*.bytes.tx'

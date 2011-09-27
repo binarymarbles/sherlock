@@ -11,12 +11,16 @@ class GraphDefinition
     @name = json.name
 
     throw "Missing type for graph #{json}" unless json.type?
-    throw "Invalid type for graph #{json}" unless _.include ['counter', 'differential'], json.type
+    throw "Invalid type #{json.type} for graph #{json}" unless _.include ['counter', 'incremental'], json.type
     @type = json.type
 
     throw "Missing keys for graph #{json}" unless json.keys?
     throw "Invalid keys for graph #{json}" unless typeof(json.keys) == 'object' && _.keys(json.keys).length > 0
     @keys = json.keys
+
+  # Returns all paths for this graph.
+  paths: ->
+    _.keys @keys
 
   # Return the appropriate label for the given metric path.
   labelForPath: (path) ->

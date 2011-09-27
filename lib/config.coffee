@@ -1,6 +1,6 @@
 _ = require 'underscore'
 fs = require 'fs'
-
+ 
 ClientDefinition = require './client_definition'
 ProviderDefinition = require './provider_definition'
 NodeDefinition = require './node_definition'
