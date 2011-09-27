@@ -1,6 +1,8 @@
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
+DateSupport = require '../lib/date_support'
+
 # Define the schema for the "metrics" collection.
 metricSchema = new Schema
   snapshot_id:
@@ -14,6 +16,7 @@ metricSchema = new Schema
   timestamp:
     type: Date
     required: true
+    set: DateSupport.stripSeconds
 
   path:
     type: String

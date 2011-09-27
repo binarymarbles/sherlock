@@ -2,6 +2,8 @@ require 'date-utils'
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
+DateSupport = require '../lib/date_support'
+
 # Define the schema for the "snapshots" collection.
 snapshotSchema = new Schema
   node_id:
@@ -11,6 +13,7 @@ snapshotSchema = new Schema
   timestamp:
     type: Date
     required: true
+    set: DateSupport.stripSeconds
 
   key:
     type: String
