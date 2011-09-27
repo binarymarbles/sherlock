@@ -1,7 +1,7 @@
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
-# Define the schema for the "metrics.avg.5m" collection.
+# Define the schema for the "metrics_avg_5m" collection.
 metricSchema = new Schema(
   {
     node_id:
@@ -21,7 +21,7 @@ metricSchema = new Schema(
       required: true
       default: 0
   },
-  { collection_name: 'metrics.avg.5m' }
+  { collection: 'metrics_avg_5m' }
 )
 
 # Add a compound index on node id and timestamp.
