@@ -1,4 +1,6 @@
 MetricCollector = require '../lib/metric_collector'
+MetricNumberConverter = require '../lib/metric_number_converter'
+
 config = (require '../lib/config').load()
 
 module.exports = (app) ->
@@ -38,13 +40,22 @@ module.exports = (app) ->
         throw new Error(error.message)
       else
 
+        console.log dataSet
+
         # Prepare a set of labels for all metrics.
         labels = {}
         for path, metrics of dataSet
           labels[path] = req.graph.labelForPath(path)
 
+        # Apply conversions to the metrics if requested.
+        if req.graph.conversion?
+          converter = new MetricNumberConverter dataSet
+          console.log 'en0 before:', dataSet['network_interfaces.en0.bytes.rx']
+          dataSet = converter.applyConversion req.graph.conversion
+          console.log 'en0 after:', dataSet['network_interfaces.en0.bytes.rx']
+
         res.render 'graphs/show',
           node: req.node
           graph: req.graph
           metrics: dataSet
-          metricLabels: labels
+          labels: labels

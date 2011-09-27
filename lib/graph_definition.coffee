@@ -10,6 +10,9 @@ class GraphDefinition
     throw "Missing name for graph #{json}" unless json.name?
     @name = json.name
 
+    @unit = if json.unit? then json.unit else ''
+    @conversion = if json.conversion? then json.conversion else ''
+
     throw "Missing type for graph #{json}" unless json.type?
     throw "Invalid type #{json.type} for graph #{json}" unless _.include ['counter', 'incremental'], json.type
     @type = json.type

@@ -16,14 +16,14 @@ $(document).ready(function() {
     },
     yAxis: {
       title: {
-        text: '<%= @graph.name %>'
+        text: '<%= @graph.unit %>'
       },
       min: 0
     },
     series: [
       <% for metricName, metrics of @metrics: %>
         {
-          name: '<%= @metricLabels[metricName] %>',
+          name: '<%= @labels[metricName] %>',
           lineWidth: 1,
           marker: {
             radius: 1
