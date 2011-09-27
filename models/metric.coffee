@@ -3,7 +3,7 @@ Schema = mongoose.Schema
 
 # Define the schema for the "metrics" collection.
 metricSchema = new Schema
-  snapshot:
+  snapshot_id:
     type: Schema.ObjectId
     required: true
 
@@ -24,19 +24,15 @@ metricSchema = new Schema
     required: true
     default: 0
 
-# Add a unique compound index on snapshot and path.
+# Add a compound index on node id and timestamp.
 metricSchema.index(
   {
-    snapshot: 1,
+    node_id: 1
     path: 1
+    timestamp: 1
   },
   { unique: true }
 )
-
-# Add a compound index on node id and timestamp.
-metricSchema.index
-  node_id: 1
-  timestamp: 1
 
 mongoose.model 'Metric', metricSchema
 module.exports = mongoose.model 'Metric'

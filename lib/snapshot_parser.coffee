@@ -6,7 +6,7 @@ config = (require './config').load()
  
 Snapshot = require '../models/snapshot'
 Process = require '../models/process'
-MetricLabel = require '../models/metric_label'
+Label = require '../models/label'
 Metric = require '../models/metric'
 
 class SnapshotParser
@@ -23,7 +23,7 @@ class SnapshotParser
       callback error
       return
 
-    # Flatten the metric data and extract metric labels.
+    # Flatten the metric data and extract labels.
     @flattenData()
     @extractLabels()
 
@@ -103,6 +103,10 @@ class SnapshotParser
       value = @data[dataIndex].value
 
       if _.include key, 'labels'
+
+        # Remove the 'label' element from the key.
+        labelElementIndex = key.indexOf 'labels'
+        key.splice labelElementIndex, 1
 
         labelIndexes.push dataIndex
 
@@ -197,21 +201,29 @@ class SnapshotParser
     labelModels = []
     for label in @labels
 
-        labelModel = new MetricLabel
-          snapshot: @snapshot.id
-          node_id: @snapshot.node_id
-          timestamp: @snapshot.timestamp
-          path: label.key.join '.'
-          value: label.value
-        labelModels.push labelModel
+      labelModel = new Label
+        node_id: @snapshot.node_id
+        path: label.key.join '.'
+        value: label.value
+      labelModels.push labelModel
 
     # Save all the label models in parallel.
     async.forEach labelModels,
       (labelModel, modelCallback) ->
-        labelModel.save (errors) ->
-          if errors?
-            console.log 'Validation failed on metric label', labelModel, ':', errors
-          modelCallback errors
+
+        conditions =
+          node_id: labelModel.node_id
+          path: labelModel.path
+
+        attributes =
+          value: labelModel.value
+
+        # Do an upsert here since we only keep unique node_id/path combinations.
+        Label.update conditions, attributes, { upsert: true }, (error) ->
+          if error?
+            console.log 'Unable to persist label', labelModel, ':', error
+          else
+            modelCallback null
       ,
       (error) ->
         callback error, labelModels
@@ -223,7 +235,7 @@ class SnapshotParser
     for element in @data
 
       metric = new Metric
-        snapshot: @snapshot.id
+        snapshot_id: @snapshot.id
         node_id: @snapshot.node_id
         timestamp: @snapshot.timestamp
         path: element.key.join '.'

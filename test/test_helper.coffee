@@ -7,8 +7,12 @@ configModule = require '../lib/config'
 
 Snapshot = require '../models/snapshot'
 Process = require '../models/process'
-MetricLabel = require '../models/metric_label'
+Label = require '../models/label'
 Metric = require '../models/metric'
+MetricAvg5m = require '../models/metric_avg_5m'
+MetricAvg1h = require '../models/metric_avg_1h'
+MetricAvg1d = require '../models/metric_avg_1d'
+MetricAvg1w = require '../models/metric_avg_1w'
 
 class TestHelper
 
@@ -30,9 +34,17 @@ class TestHelper
       , (callback) ->
           Process.collection.remove callback
       , (callback) ->
-          MetricLabel.collection.remove callback
+          Label.collection.remove callback
       , (callback) ->
           Metric.collection.remove callback
+      , (callback) ->
+          MetricAvg5m.collection.remove callback
+      , (callback) ->
+          MetricAvg1d.collection.remove callback
+      , (callback) ->
+          MetricAvg1h.collection.remove callback
+      , (callback) ->
+          MetricAvg1w.collection.remove callback
     ], (err, results) ->
       callback err, results
 
@@ -58,7 +70,7 @@ class TestHelper
     # Create the metrics.
     for metric in metrics
       models.push new Metric
-        snapshot: snapshot.id
+        snapshot_id: snapshot.id
         node_id: node_id
         timestamp: timestamp
         path: metric.path

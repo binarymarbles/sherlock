@@ -8,7 +8,7 @@ TestHelper = require './test_helper'
 SnapshotParser = require '../lib/snapshot_parser'
 Snapshot = require '../models/snapshot'
 Process = require '../models/process'
-MetricLabel = require '../models/metric_label'
+Label = require '../models/label'
 Metric = require '../models/metric'
  
 validJson = JSON.parse(fs.readFileSync "#{__dirname}/assets/agent_data.json", 'utf-8')
@@ -51,11 +51,11 @@ jsonWithEmptyProcesses.processes = []
 module.exports = testCase
   setUp: (callback) ->
     TestHelper.connectToDatabase()
-    callback()
+    TestHelper.resetCollections ->
+      callback()
 
   tearDown: (callback) ->
-    TestHelper.resetCollections ->
-      TestHelper.disconnectFromDatabase callback
+    TestHelper.disconnectFromDatabase callback
 
   'accept valid json data': (test) ->
     new SnapshotParser validJson, (error) ->
@@ -104,36 +104,43 @@ module.exports = testCase
 
   'have 1 snapshot': (test) ->
     new SnapshotParser validJson, (error) ->
-      test.ifError(error)
+      test.ok !error?
 
       Snapshot.count (error, count) ->
-        test.ifError error
+        test.ok !error?
         test.equals count, 1
         test.done()
 
   'have 2 processes': (test) ->
     new SnapshotParser validJson, (error) ->
-      test.ifError(error)
+      test.ok !error?
 
       Process.count (error, count) ->
-        test.ifError error
+        test.ok !error?
         test.equals count, 2
         test.done()
 
   'have 3 labels': (test) ->
     new SnapshotParser validJson, (error) ->
-      test.ifError(error)
+      test.ok !error?
 
-      MetricLabel.count (error, count) ->
-        test.ifError error
+      Label.count (error, count) ->
+        test.ok !error?
         test.equals count, 4
-        test.done()
+
+        Label.find (error, labels) ->
+          test.ok !error?
+          labels[0].path.should == 'network_interfaces.eth0.ipv4_address'
+          labels[1].path.should == 'network_interfaces.eth1.ipv4_address'
+          labels[2].path.should == 'disks./dev/sda1.mount_point'
+          labels[3].path.should == 'disks./dev/sda1.file_system'
+          test.done()
 
   'have 27 metrics': (test) ->
     new SnapshotParser validJson, (error) ->
-      test.ifError(error)
+      test.ok !error?
 
       Metric.count (error, count) ->
-        test.ifError error
+        test.ok !error?
         test.equals count, 27
         test.done()

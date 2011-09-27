@@ -8,6 +8,10 @@ Schema = mongoose.Schema
 MetricMapReduce = require './metric_map_reduce'
 Snapshot = require '../models/snapshot'
 Metric = require '../models/metric'
+MetricAvg1w = require '../models/metric_avg_1w'
+MetricAvg1d = require '../models/metric_avg_1d'
+MetricAvg1h = require '../models/metric_avg_1h'
+MetricAvg5m = require '../models/metric_avg_5m'
 
 # Collects metrics from the database for use in graphs.
 class MetricCollector
@@ -50,66 +54,35 @@ class MetricCollector
       matcher = @queryMatcherForPath path
       pathMatchers.push matcher
 
-    # Figure out what map function to use in the mapreduce operation.
-    if @timespanInHours <= 12
-      mapFunction = MetricMapReduce.rawMapFunction.toString()
-    else if @timespanInHours <= 24
-      mapFunction = MetricMapReduce.fiveMinuteAverageMapFunction.toString()
-    else
-      mapFunction = MetricMapReduce.mapFunctionForTimespan(@timespanInDays).toString()
+    # Figure out what model to start the query from. This depends on the amount
+    # of hours or days covered by the requested from and two date.
+    metricModel = Metric
 
-    # Figure out what reduce function to use in the mapreduce operation.
-    reduceFunction = MetricMapReduce.reduceFunction.toString()
+    if @timespanInDays >= 180 # If more than 6 months, return weekly averages.
+      metricModel = MetricAvg1w
+    else if @timespanInDays >= 90 # If more than 3 months, return daily averages
+      metricModel = MetricAvg1d
+    else if @timespanInDays >= 30 # If more than one month, return hourly averages.
+      metricModel = MetricAvg1h
+    else if @timespanInDays >= 1 # If more than 1 day, return 5 minute averages.
+      metricModel = MetricAvg5m
 
-    # Figure out what finalize function to use in the mapreduce operation.
-    finalizeFunction = MetricMapReduce.finalizeFunction.toString()
+    # Query for all the metrics requested.
+    query = metricModel.find
+      '$or': pathMatchers
 
-    # Define the collection name that should be used to store the results.
-    collectionName = _.uniqueId 'tmp.metric_collector_results.'
+    query = query.where('node_id', @node_id)
+    query = query.where('timestamp').gte(@fromTime)
+    query = query.where('timestamp').lte(@toTime)
 
-    # Build a Mongoose mapreduce command to fetch all the relevant metrics and
-    # smooth out the data set with averages - depending on the timespan
-    # between the from and to date.
-    command =
-      mapreduce: 'metrics'
-      query:
-        node_id: @node_id
-        timestamp:
-          '$gte': @fromTime
-          '$lte': @toTime
-        '$or': pathMatchers
-
-      map: mapFunction
-      reduce: reduceFunction
-      finalize: finalizeFunction
-
-      out:
-        replace: collectionName
-
-    # Execute the mapreduce command.
-    mongoose.connection.db.executeDbCommand command, (error, dbResults) =>
-
-      # If we failed, break out now.
+    query.run (error, metrics) =>
       if error?
         completedCallback error
-
       else
 
-        # Define a temporary model to read data from the mapreduce collection.
-        mapReduceSchema = new Schema { value: {} }, { collection: collectionName }
-        MapReduceModel = mongoose.model collectionName, mapReduceSchema
-        MapReduceModel.find().asc('value.timestamp').run (error, docs) =>
-
-          if error?
-            completedCallback error
-          else
-
-            # Build a data set from the results.
-            dataSet = @buildDataSet docs
-
-            # Remove the temporary collection we used.
-            MapReduceModel.collection.drop =>
-              completedCallback null, dataSet
+        # Build a data set from the results.
+        dataSet = @buildDataSet metrics
+        completedCallback null, dataSet
 
   # Build a Mongoose OR-query matcher for the specified metric path.
   queryMatcherForPath: (path) ->
@@ -119,10 +92,11 @@ class MetricCollector
       quotedPath = quotedPath.replace '*', '.*?'
 
       regex = new RegExp("^#{quotedPath}$")
-      return {path: { '$regex': regex }}
+      return { path: regex }
+      # return {path: { '$regex': regex }}
 
     else
-      return {path: path}
+      return { path: path }
 
   # Build a metric data set based on the collection of metric objects.
   buildDataSet: (metrics) ->
@@ -131,9 +105,9 @@ class MetricCollector
     previousCounter = null
     for metric in metrics
 
-      path = metric.value.path
-      timestamp = metric.value.timestamp
-      originalCounter = metric.value.counter
+      path = metric.path
+      timestamp = metric.timestamp
+      originalCounter = metric.counter
 
       # If this is a incremental graph, calculate the difference between
       # previousCounter and counter and use that as the value. If we have no
