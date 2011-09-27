@@ -10,6 +10,10 @@ Snapshot = require '../models/snapshot'
 Process = require '../models/process'
 Label = require '../models/label'
 Metric = require '../models/metric'
+MetricAvg5m = require '../models/metric_avg_5m'
+MetricAvg1h = require '../models/metric_avg_1h'
+MetricAvg1d = require '../models/metric_avg_1d'
+MetricAvg1w = require '../models/metric_avg_1w'
  
 validJson = JSON.parse(fs.readFileSync "#{__dirname}/assets/agent_data.json", 'utf-8')
 
@@ -143,4 +147,13 @@ module.exports = testCase
       Metric.count (error, count) ->
         test.ok !error?
         test.equals count, 27
+        test.done()
+
+  'generate averages': (test) ->
+    new SnapshotParser validJson, (error) ->
+      test.ok !error?
+
+      MetricAvg5m.count (error, count) ->
+        test.ok !error?
+        test.equals count, 1
         test.done()

@@ -3,6 +3,8 @@ async = require 'async'
 mongoose = require 'mongoose'
  
 config = (require './config').load()
+
+AverageGenerator = require '../lib/average_generator'
  
 Snapshot = require '../models/snapshot'
 Process = require '../models/process'
@@ -27,8 +29,19 @@ class SnapshotParser
     @flattenData()
     @extractLabels()
 
-    # Store the snapshot and call our callback when its complete.
-    @storeSnapshot callback
+    # Store the snapshot.
+    @storeSnapshot (error, snapshot) ->
+      if error?
+        callback error
+      else
+
+        # Calculate averages for the node.
+        averageGenerator = new AverageGenerator snapshot.node_id, snapshot.timestamp
+        averageGenerator.calculateAllAverages (error) ->
+          if error?
+            callback error
+          else
+            callback null, snapshot
 
   # Validate the contents of the JSON data structure.
   validateJson: ->
