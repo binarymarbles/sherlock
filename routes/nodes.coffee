@@ -48,11 +48,9 @@ module.exports = (app) ->
           labels[path] = req.graph.labelForPath(path)
 
         # Apply conversions to the metrics if requested.
-        if req.graph.conversion?
+        if req.graph.conversion? && req.graph.conversion != ''
           converter = new MetricNumberConverter dataSet
-          console.log 'en0 before:', dataSet['network_interfaces.en0.bytes.rx']
           dataSet = converter.applyConversion req.graph.conversion
-          console.log 'en0 after:', dataSet['network_interfaces.en0.bytes.rx']
 
         res.render 'graphs/show',
           node: req.node
