@@ -19,6 +19,9 @@ $(document).ready(function() {
         text: '<%= @graph.unit %>'
       },
       min: 0
+      <% if @graph.unit == '%': %>
+      , max: 100
+      <% end %>
     },
     series: [
       <% for metricName, metrics of @metrics: %>
