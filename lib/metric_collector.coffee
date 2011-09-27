@@ -5,7 +5,6 @@ async = require 'async'
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
-MetricMapReduce = require './metric_map_reduce'
 Snapshot = require '../models/snapshot'
 Metric = require '../models/metric'
 MetricAvg1w = require '../models/metric_avg_1w'
