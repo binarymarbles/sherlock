@@ -148,12 +148,3 @@ module.exports = testCase
         test.ok !error?
         test.equals count, 27
         test.done()
-
-  'generate averages': (test) ->
-    new SnapshotParser validJson, (error) ->
-      test.ok !error?
-
-      MetricAvg5m.count (error, count) ->
-        test.ok !error?
-        test.equals count, 27
-        test.done()

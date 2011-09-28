@@ -33,11 +33,11 @@ module.exports = testCase
       test.ok !error?
 
       # Calculate the averages for the two five minute periods.
-      averageGenerator = new AverageGenerator 'test', avg1_date_2
+      averageGenerator = new AverageGenerator avg1_date_2
       averageGenerator.calculateAllAverages (error) ->
         test.ok !error?
 
-        averageGenerator = new AverageGenerator 'test', avg2_date_2
+        averageGenerator = new AverageGenerator avg2_date_2
         averageGenerator.calculateAllAverages (error) ->
           test.ok !error?
       
@@ -70,11 +70,11 @@ module.exports = testCase
       test.ok !error?
 
       # Calculate the averages for the two one hour periods.
-      averageGenerator = new AverageGenerator 'test', avg1_date_2
+      averageGenerator = new AverageGenerator avg1_date_2
       averageGenerator.calculateAllAverages (error) ->
         test.ok !error?
 
-        averageGenerator = new AverageGenerator 'test', avg2_date_1
+        averageGenerator = new AverageGenerator avg2_date_1
         averageGenerator.calculateAllAverages (error) ->
           test.ok !error?
 
@@ -107,11 +107,11 @@ module.exports = testCase
       test.ok !error?
 
       # Calculate the averages for the two one day periods.
-      averageGenerator = new AverageGenerator 'test', avg1_date_2
+      averageGenerator = new AverageGenerator avg1_date_2
       averageGenerator.calculateAllAverages (error) ->
         test.ok !error?
 
-        averageGenerator = new AverageGenerator 'test', avg2_date_1
+        averageGenerator = new AverageGenerator avg2_date_1
         averageGenerator.calculateAllAverages (error) ->
           test.ok !error?
 
@@ -144,11 +144,11 @@ module.exports = testCase
       test.ok !error?
 
       # Calculate the averages for the two one hour periods.
-      averageGenerator = new AverageGenerator 'test', avg1_date_2
+      averageGenerator = new AverageGenerator avg1_date_2
       averageGenerator.calculateAllAverages (error) ->
         test.ok !error?
 
-        averageGenerator = new AverageGenerator 'test', avg2_date_1
+        averageGenerator = new AverageGenerator avg2_date_1
         averageGenerator.calculateAllAverages (error) ->
           test.ok !error?
       
@@ -161,3 +161,45 @@ module.exports = testCase
             test.equals dataSet['test.metric'][0].value, 6
             test.equals dataSet['test.metric'][1].value, 2
             test.done()
+
+  'calculate averages separately for each node': (test) ->
+
+    base_date = new Date().clearTime().addHours(3)
+
+    avg1_date_1 = base_date.clone().addMinutes 5
+    avg1_date_2 = base_date.clone().addMinutes 6
+    avg2_date_1 = base_date.clone().addMinutes 10
+
+    # Create three snapshots with different values and timestamps where half of
+    # the values are in one average, the rest in another.
+    TestHelper.createSimpleSnapshots [
+      { timestamp: avg1_date_1, counter: 4 },
+      { timestamp: avg1_date_2, counter: 8, node_id: 'test2' },
+      { timestamp: avg2_date_1, counter: 2 },
+    ], (error, snapshots) ->
+      test.ok !error?
+
+      # Calculate the averages for the two five minute periods.
+      averageGenerator = new AverageGenerator avg1_date_2
+      averageGenerator.calculateAllAverages (error) ->
+        test.ok !error?
+
+        averageGenerator = new AverageGenerator avg2_date_1
+        averageGenerator.calculateAllAverages (error) ->
+          test.ok !error?
+      
+          collector = new MetricCollector 'test', ['test.metric'], new Date().addHours(-24)
+          collector.metrics (error, dataSet) ->
+            test.ok !error?
+            test.equals _.keys(dataSet).length, 1
+            test.equals dataSet['test.metric'].length, 2
+            test.equals dataSet['test.metric'][0].value, 4
+            test.equals dataSet['test.metric'][1].value, 2
+
+            collector = new MetricCollector 'test2', ['test.metric'], new Date().addHours(-24)
+            collector.metrics (error, dataSet) ->
+              test.ok !error?
+              test.equals _.keys(dataSet).length, 1
+              test.equals dataSet['test.metric'].length, 1
+              test.equals dataSet['test.metric'][0].value, 8
+              test.done()

@@ -1,7 +1,11 @@
 express = require 'express'
 eco = require 'eco'
+cron = require 'cron'
 app = module.exports = express.createServer()
 require './lib/db_connection'
+
+BenchmarkTimer = require './lib/benchmark_timer'
+AverageGenerator = require './lib/average_generator'
 
 # App configuration.
 app.set 'views', __dirname + '/views'
@@ -26,3 +30,12 @@ app.configure ->
 # Start Express.
 app.listen(6750)
 console.log 'Sherlock listening on port %d in %s mode', app.address().port, app.settings.env
+
+# Set up an internal cron job that calculates some averages for our metrics.
+cron.CronJob '30 */5 * * * *', ->
+
+  timer = new BenchmarkTimer 'calculate averages'
+  averageGenerator = new AverageGenerator
+  averageGenerator.calculateAllAverages (error) ->
+    timer.end()
+    console.log 'Recalculated all averages'

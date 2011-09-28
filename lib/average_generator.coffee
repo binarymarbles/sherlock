@@ -12,8 +12,7 @@ MetricAvg1w = require '../models/metric_avg_1w'
 # Generates metric averages for the specified node.
 class AverageGenerator
 
-  constructor: (node_id, endTime) ->
-    @node_id = node_id
+  constructor: (endTime) ->
     @endTime = endTime || new Date()
 
     # Strip off seconds and milliseconds on the end time since that's not
@@ -56,12 +55,12 @@ class AverageGenerator
 
     # Define the map function to use.
     map = ->
-      emit @path,
+      emit { path: @path, node_id: @node_id },
         count: 1
         counter: @counter
 
     # Define the reduce function to use.
-    reduce = (path, data) ->
+    reduce = (key, data) ->
       result =
         count: 0
         counter: 0
@@ -82,7 +81,6 @@ class AverageGenerator
     command =
       mapreduce: Metric.collection.name
       query:
-        node_id: @node_id
         timestamp:
           '$gte': startTime
           '$lte': @endTime
@@ -111,9 +109,9 @@ class AverageGenerator
           for result in results
 
             targetModels.push new targetModel
-              node_id: @node_id
+              node_id: result._id.node_id
               timestamp: startTime
-              path: result._id
+              path: result._id.path
               counter: result.value.counter
           
           timer = new BenchmarkTimer 'persisting average models'
@@ -123,7 +121,7 @@ class AverageGenerator
               # Persist the target model using an upsert.
 
               targetConditions =
-                node_id: @node_id
+                node_id: model.node_id
                 path: model.path
                 timestamp: model.timestamp
 
@@ -135,49 +133,6 @@ class AverageGenerator
             (error) ->
               timer.end()
               completedCallback error
-
-    # # Execute the query.
-    # Metric.collection.group ['node_id, path'], conditions, initialValue, reduce.toString(), (error, results) =>
-
-    #   if error?
-    #     completedCallback error
-    #   else
-
-    #     # Don't do anything if we had no results - if the group query returned
-    #     # a blank array, there was no data within the defined time frame.
-    #     if results.length == 0
-    #       completedCallback null
-    #     else
-
-    #       # Iterate through all results and persist a target model for each.
-    #       targetModels = []
-    #       for result in results
-
-    #         average = result.total / result.count
-    #         targetModels.push new targetModel
-    #           node_id: @node_id
-    #           timestamp: startTime
-    #           path: result.path
-    #           counter: average
-
-    #       async.forEach targetModels,
-    #         (model, callback) =>
-
-    #           # Persist the target model using an upsert.
-
-    #           targetConditions =
-    #             node_id: @node_id
-    #             timestamp: model.timestamp
-    #             path: model.path
-
-    #           targetAttributes =
-    #             counter: model.counter
-
-    #           targetModel.update targetConditions, targetAttributes, { upsert: true }, callback
-
-    #         ,
-    #         (error) ->
-    #           completedCallback error
 
   # Calculate five minute averages for the current node. These averages are
   # based on the raw metrics.

@@ -17,6 +17,7 @@ metricSchema = new Schema
     type: Date
     required: true
     set: DateSupport.stripSeconds
+    index: true
 
   path:
     type: String

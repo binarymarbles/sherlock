@@ -4,7 +4,6 @@ mongoose = require 'mongoose'
  
 config = (require './config').load()
 
-AverageGenerator = require '../lib/average_generator'
 BenchmarkTimer = require '../lib/benchmark_timer'
  
 Snapshot = require '../models/snapshot'
@@ -37,16 +36,12 @@ class SnapshotParser
         callback error
       else
 
-        # Calculate averages for the node.
-        averageGenerator = new AverageGenerator snapshot.node_id, snapshot.timestamp
-        averageGenerator.calculateAllAverages (error) ->
+        snapshotTimer.end()
 
-          snapshotTimer.end()
-
-          if error?
-            callback error
-          else
-            callback null, snapshot
+        if error?
+          callback error
+        else
+          callback null, snapshot
 
   # Validate the contents of the JSON data structure.
   validateJson: ->
