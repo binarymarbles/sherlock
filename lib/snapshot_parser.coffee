@@ -5,6 +5,7 @@ mongoose = require 'mongoose'
 config = (require './config').load()
 
 AverageGenerator = require '../lib/average_generator'
+BenchmarkTimer = require '../lib/benchmark_timer'
  
 Snapshot = require '../models/snapshot'
 Process = require '../models/process'
@@ -30,6 +31,7 @@ class SnapshotParser
     @extractLabels()
 
     # Store the snapshot.
+    snapshotTimer = new BenchmarkTimer 'store full snapshot'
     @storeSnapshot (error, snapshot) ->
       if error?
         callback error
@@ -38,6 +40,9 @@ class SnapshotParser
         # Calculate averages for the node.
         averageGenerator = new AverageGenerator snapshot.node_id, snapshot.timestamp
         averageGenerator.calculateAllAverages (error) ->
+
+          snapshotTimer.end()
+
           if error?
             callback error
           else
@@ -136,7 +141,10 @@ class SnapshotParser
 
     callback = callback || ->
 
+    snapshotTimer = new BenchmarkTimer 'store snapshot model'
     @writeSnapshot (error, snapshot) =>
+
+      snapshotTimer.end()
 
       if error?
         callback error
@@ -149,17 +157,26 @@ class SnapshotParser
 
           # Store all the processes.
           (callback) =>
-            @writeProcesses callback
+            timer = new BenchmarkTimer 'store processes'
+            @writeProcesses (error, results) ->
+              timer.end()
+              callback error, results
           ,
 
           # Store all the labels.
           (callback) =>
-            @writeLabels callback
+            timer = new BenchmarkTimer 'store labels'
+            @writeLabels (error, results) ->
+              timer.end()
+              callback error, results
           ,
 
           # Store all the metrics.
           (callback) =>
-            @writeMetrics callback
+            timer = new BenchmarkTimer 'store metrics'
+            @writeMetrics (error, results) ->
+              timer.end()
+              callback error, results
 
         ], (err, result) =>
           callback err, @snapshot

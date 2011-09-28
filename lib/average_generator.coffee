@@ -1,6 +1,8 @@
 async = require 'async'
 mongoose = require 'mongoose'
 
+BenchmarkTimer = require './benchmark_timer'
+
 Metric = require '../models/metric'
 MetricAvg5m = require '../models/metric_avg_5m'
 MetricAvg1h = require '../models/metric_avg_1h'
@@ -22,16 +24,30 @@ class AverageGenerator
   # Calculate all types of averages.
   calculateAllAverages: (completedCallback) ->
 
+    totalTimer = new BenchmarkTimer 'calculating all averages'
     async.series [
         (callback) =>
-          @calculateFiveMinuteAverages callback
+          timer = new BenchmarkTimer 'calculate five minute averages'
+          @calculateFiveMinuteAverages (error, results) ->
+            timer.end()
+            callback error, results
       , (callback) =>
-          @calculateOneHourAverages callback
+          timer = new BenchmarkTimer 'calculate one hour averages'
+          @calculateOneHourAverages (error, results) ->
+            timer.end()
+            callback error, results
       , (callback) =>
-          @calculateOneDayAverages callback
+          timer = new BenchmarkTimer 'calculate one day averages'
+          @calculateOneDayAverages (error, results) ->
+            timer.end()
+            callback error, results
       , (callback) =>
-          @calculateOneWeekAverages callback
+          timer = new BenchmarkTimer 'calculate one week averages'
+          @calculateOneWeekAverages (error, results) ->
+            timer.end()
+            callback error, results
     ], (error, results) ->
+      totalTimer.end()
       completedCallback error, results
 
   # Build a set of averages using MongoDBs aggregation functionality, and
