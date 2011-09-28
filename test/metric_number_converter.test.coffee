@@ -22,7 +22,7 @@ module.exports = testCase
   'bytes to MbitPerSecond': (test) ->
     result = @converter.applyConversion 'bytesToMbitPerSecond'
     test.equals result['test.metric'][0].value, 0
-    test.equals result['test.metric'][1].value, 7.62
+    test.equals result['test.metric'][1].value, 7.63
     test.done()
 
   'bytes to MB': (test) ->

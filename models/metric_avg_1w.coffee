@@ -28,8 +28,8 @@ metricSchema = new Schema(
 metricSchema.index(
   {
     node_id: 1
-    timestamp: 1
     path: 1
+    timestamp: 1
   },
   { unique: true }
 )

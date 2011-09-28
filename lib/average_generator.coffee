@@ -54,33 +54,54 @@ class AverageGenerator
   # persist a new set of aggregated data.
   buildAverages: (targetModel, startTime, completedCallback) ->
 
-    # Prepare the conditions for the group query.
-    conditions =
-      node_id: @node_id
-      timestamp:
-        '$gte': startTime
-        '$lte': @endTime
-
-    # Set the initial value of the aggregation counter.
-    initialValue =
-      total: 0
-      count: 0
+    # Define the map function to use.
+    map = ->
+      emit @path,
+        count: 1
+        counter: @counter
 
     # Define the reduce function to use.
-    reduce = (doc, out) ->
-      out.count++
-      out.total += doc.counter
-      out.path = doc.path
+    reduce = (path, data) ->
+      result =
+        count: 0
+        counter: 0
 
-    # Execute the query.
-    Metric.collection.group ['node_id, path'], conditions, initialValue, reduce.toString(), (error, results) =>
+      data.forEach (value) ->
+        result.count += 1
+        result.counter += value.counter
 
+      result
+
+    # Define the finalize function to use.
+    finalize = (path, data) ->
+      if data.count > 1
+        data.counter = data.counter / data.count
+      data
+
+    # Prepare the mapreduce command.
+    command =
+      mapreduce: Metric.collection.name
+      query:
+        node_id: @node_id
+        timestamp:
+          '$gte': startTime
+          '$lte': @endTime
+      map: map.toString()
+      reduce: reduce.toString()
+      finalize: finalize.toString()
+      out:
+        inline: 1
+
+    # Run the mapreduce command.
+    mongoose.connection.db.executeDbCommand command, (error, dbResults) =>
       if error?
         completedCallback error
       else
 
-        # Don't do anything if we had no results - if the group query returned
-        # a blank array, there was no data within the defined time frame.
+        results = dbResults.documents[0].results
+
+        # Don't do anything if we had no results - if the operation returned a
+        # blank array, there was no data within the defined time frame.
         if results.length == 0
           completedCallback null
         else
@@ -89,13 +110,13 @@ class AverageGenerator
           targetModels = []
           for result in results
 
-            average = result.total / result.count
             targetModels.push new targetModel
               node_id: @node_id
               timestamp: startTime
-              path: result.path
-              counter: average
-
+              path: result._id
+              counter: result.value.counter
+          
+          timer = new BenchmarkTimer 'persisting average models'
           async.forEach targetModels,
             (model, callback) =>
 
@@ -103,17 +124,60 @@ class AverageGenerator
 
               targetConditions =
                 node_id: @node_id
-                timestamp: model.timestamp
                 path: model.path
+                timestamp: model.timestamp
 
               targetAttributes =
                 counter: model.counter
 
               targetModel.update targetConditions, targetAttributes, { upsert: true }, callback
-
             ,
             (error) ->
+              timer.end()
               completedCallback error
+
+    # # Execute the query.
+    # Metric.collection.group ['node_id, path'], conditions, initialValue, reduce.toString(), (error, results) =>
+
+    #   if error?
+    #     completedCallback error
+    #   else
+
+    #     # Don't do anything if we had no results - if the group query returned
+    #     # a blank array, there was no data within the defined time frame.
+    #     if results.length == 0
+    #       completedCallback null
+    #     else
+
+    #       # Iterate through all results and persist a target model for each.
+    #       targetModels = []
+    #       for result in results
+
+    #         average = result.total / result.count
+    #         targetModels.push new targetModel
+    #           node_id: @node_id
+    #           timestamp: startTime
+    #           path: result.path
+    #           counter: average
+
+    #       async.forEach targetModels,
+    #         (model, callback) =>
+
+    #           # Persist the target model using an upsert.
+
+    #           targetConditions =
+    #             node_id: @node_id
+    #             timestamp: model.timestamp
+    #             path: model.path
+
+    #           targetAttributes =
+    #             counter: model.counter
+
+    #           targetModel.update targetConditions, targetAttributes, { upsert: true }, callback
+
+    #         ,
+    #         (error) ->
+    #           completedCallback error
 
   # Calculate five minute averages for the current node. These averages are
   # based on the raw metrics.

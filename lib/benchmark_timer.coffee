@@ -7,6 +7,6 @@ class BenchmarkTimer
   end: ->
     end = new Date().valueOf() / 1000
     duration = Math.round(((end - @start) * 100)) / 100
-    console.log 'Task', @description, 'completed in', duration, 'seconds'
+    # console.log 'Task', @description, 'completed in', duration, 'seconds'
 
 module.exports = BenchmarkTimer

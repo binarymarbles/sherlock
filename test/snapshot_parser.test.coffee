@@ -155,5 +155,5 @@ module.exports = testCase
 
       MetricAvg5m.count (error, count) ->
         test.ok !error?
-        test.equals count, 1
+        test.equals count, 27
         test.done()
