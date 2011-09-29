@@ -1,5 +1,4 @@
 # encoding: utf-8
-# vim:ft=ruby
 
 # Copyright 2011 Binary Marbles.
 # 
@@ -15,18 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source :rubygems
+require 'spec_helper'
 
-gem 'mongo_mapper'
-gem 'bson_ext'
-gem 'json'
-gem 'activesupport'
-gem 'activemodel'
+describe Sherlock::Models::Snapshot do
+  context '#attributes' do
+    let(:snapshot) { Sherlock::Models::Snapshot.new }
 
-group :development do
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'rspec'
-  gem 'shoulda'
-  gem 'rb-fsevent', :require => false
+    it 'should have many processes' do
+      snapshot.should respond_to(:processes)
+      snapshot.should respond_to(:processes=)
+    end
+
+    it 'should have many metrics' do
+      snapshot.should respond_to(:metrics)
+      snapshot.should respond_to(:metrics=)
+    end
+  end
 end

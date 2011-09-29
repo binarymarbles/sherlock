@@ -1,0 +1,11 @@
+development:
+  hostname: localhost
+  database: sherlock
+
+test:
+  hostname: localhost
+  database: sherlock_test
+
+production:
+  hostname: localhost
+  database: sherlock

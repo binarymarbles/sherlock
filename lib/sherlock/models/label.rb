@@ -1,5 +1,4 @@
 # encoding: utf-8
-# vim:ft=ruby
 
 # Copyright 2011 Binary Marbles.
 # 
@@ -15,18 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source :rubygems
+module Sherlock #:nodoc
+  module Models #:nodoc
 
-gem 'mongo_mapper'
-gem 'bson_ext'
-gem 'json'
-gem 'activesupport'
-gem 'activemodel'
+    # Defines a label for a node and metric path.
+    class Label
 
-group :development do
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'rspec'
-  gem 'shoulda'
-  gem 'rb-fsevent', :require => false
+      include MongoMapper::Document
+
+      # Define the fields for a label.
+      key :node_id, String
+      key :path, String
+      key :value, String
+
+      # Validate that the label has a node id set.
+      validates :node_id, :presence => true
+
+      # Validate that the label has a path set.
+      validates :path, :presence => true
+
+      # Validate that the label has a value set.
+      validates :value, :presence => true
+
+    end
+
+  end
 end

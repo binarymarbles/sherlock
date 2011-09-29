@@ -18,10 +18,11 @@ require 'spec_helper'
 
 describe Sherlock::SnapshotParser do
 
-  context '#instantiating snapshot parser' do
-    before(:each) { stub_config_directory }
+  before(:each) { stub_config_directory }
+  let(:valid_json) { read_asset_file('agent-data/valid.json') }
 
-    let(:valid_json) { read_asset_file('agent-data/valid.json') }
+  context '#instantiating snapshot parser' do
+
     let(:invalid_json) { read_asset_file('agent-data/invalid.json') }
     let(:json_without_node_id) { read_asset_file('agent-data/without_node_id.json') }
     let(:json_with_invalid_node_id) { read_asset_file('agent-data/invalid_node_id.json') }
@@ -75,6 +76,22 @@ describe Sherlock::SnapshotParser do
 
     it 'should not accept non-hash data' do
       lambda { Sherlock::SnapshotParser.new(json_with_invalid_data) }.should raise_error(Sherlock::Errors::ParserError)
+    end
+  end
+
+  context '#parsing snapshot json' do
+    let(:parser) { Sherlock::SnapshotParser.new(valid_json) }
+
+    it 'should have found two processes' do
+      parser.processes.size.should == 2
+    end
+
+    it 'should have found three labels' do
+      parser.labels.size.should == 4
+    end
+
+    it 'should have found 27 metrics' do
+      parser.metrics.size.should == 27
     end
   end
 

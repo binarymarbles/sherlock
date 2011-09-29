@@ -19,7 +19,6 @@ require 'json'
 module Sherlock #:nodoc
 
   # Stores the global application configuration for Sherlock. This includes:
-  #  - Database connection parameters.
   #  - Client definitions.
   #  - Location definitions.
   #  - Graph definitions.
@@ -36,22 +35,11 @@ module Sherlock #:nodoc
     #   configuration file failed.
     def configs
       {
-        :database => database,
         :clients => clients,
         :providers => providers,
         :graphs => graphs,
         :nodes => nodes
       }
-    end
-
-    # Returns a hash containing the database configuration.
-    #
-    # @return [ Hash ] A hash containing the database configuration.
-    #
-    # @raise [ Sherlock::Errors::ConfigError ] If loading or parsing the
-    #   database configuration file failed.
-    def database
-      @database ||= load_database_configuration
     end
 
     # Returns an array containing the client configuration.
@@ -165,30 +153,6 @@ module Sherlock #:nodoc
       rescue StandardError => e
         raise_config_error(filename, "Unable to load configuration file: #{e.message}")
       end
-    end
-
-    # Load the database configuration from the configuration directory.
-    #
-    # @return [ HashWithIndifferentAccess ] The configuration file data.
-    #
-    # @raise [ Sherlock::Errors::ConfigError ] If the configuration file
-    #   failed to load, or if there was an error in the file.
-    def load_database_configuration
-
-      config_file = 'database.json'
-      config = load_json_config(config_file)
-
-      # Validate the configuration file data we just loaded.
-      raise_config_error(config_file, 'No database configuration found for environment') if config.blank?
-
-      # Validate that we have a hostname set.
-      raise_config_error(config_file, 'No hostname configured') if config[:hostname].blank?
-
-      # Validate that we have a database name set.
-      raise_config_error(config_file, 'No database configured') if config[:database].blank?
-
-      config
-
     end
 
     # Load the client configuration from the configuration directory.

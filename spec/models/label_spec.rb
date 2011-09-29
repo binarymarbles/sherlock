@@ -14,21 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Sherlock
-  module Models
+require 'spec_helper'
+
+describe Sherlock::Models::Label do
+  context '#validations' do
+    let(:label) { Sherlock::Models::Label.new(:node_id => 'test_node', :path => 'test.metric', :value => 'Test Label') }
+
+    it 'should be valid' do
+      label.should be_valid
+    end
+
+    it 'should validate presence of node_id' do
+      label.node_id = nil
+      label.should_not be_valid
+    end
+
+    it 'should validate presence of path' do
+      label.path = nil
+      label.should_not be_valid
+    end
+
+    it 'should validate presence of value' do
+      label.value = nil
+      label.should_not be_valid
+    end
   end
 end
-
-# ActiveModel-models.
-require 'sherlock/models/client'
-require 'sherlock/models/contact'
-require 'sherlock/models/provider'
-require 'sherlock/models/graph'
-require 'sherlock/models/graph_key'
-require 'sherlock/models/node'
-
-# MongoMapper models.
-require 'sherlock/models/process'
-require 'sherlock/models/label'
-require 'sherlock/models/metric'
-require 'sherlock/models/snapshot'

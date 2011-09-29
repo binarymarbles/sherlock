@@ -35,4 +35,7 @@ guard 'rspec', :version => 2, :cli => '--color --format nested --fail-fast', :al
   # Rerun the config spec when any configuration asset changes.
   watch(%r{^spec/assets/config/.+\.json$})        { 'spec/config_spec.rb' }
 
+  # Rerun all tests when the Gemfile.lock file changes.
+  watch(%r{^Gemfile\.lock$})                      { 'spec' }
+
 end
