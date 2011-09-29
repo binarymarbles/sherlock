@@ -186,13 +186,6 @@ module Sherlock #:nodoc
     # @param [ Hash ] data The current level of the data hash to parse.
     #
     # @return [ Hash ] The keys extracted from this level of the data hash.
-    # :virtual_memory_size => process_info[:virtual_memory_size],
-    # :residential_set_size => process_info[:residential_set_size],
-    # :tty => process_info[:tty],
-    # :state => process_info[:state],
-    # :started_at => process_info[:started_at],
-    # :cpu_time => process_info[:cpu_time],
-    # :command => process_info[:command]
     def flatten_snapshot_data_level(input, prefix, data)
 
       data.keys.each do |key|
