@@ -25,12 +25,13 @@ Sherlock after the initial implementation phase has completed and we have a
 working beta release.
 
 The Sherlock server itself will be written in
-[CoffeeScript](http://jashkenas.github.com/coffee-script/) and will be built
-using [Node](http://nodejs.org/). Metrics will be stored in
+[Ruby](http://www.ruby-lang.org/en/) utilizing
+[EventMachine](http://rubyeventmachine.com/) and
+[Sinatra](http://www.sinatrarb.com/).  Metrics will be stored in
 [MongoDB](http://www.mongodb.org/).
 
-The system agents have not yet been planned, but they will most likely be
-implemented in Ruby or Python.
+System agents are implemented in Ruby in a [separate
+project](http://github.com/binarymarbles/watson).
 
 # License
 
