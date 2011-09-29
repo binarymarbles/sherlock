@@ -1,0 +1,17 @@
+[
+
+  {
+    "id": "test",
+    "hostname": "test.fqdn",
+    "client": "test-client-1",
+    "provider": "test-provider-1"
+  },
+
+  {
+    "id": "test2",
+    "hostname": "test2.fqdn",
+    "client": "test-client-2",
+    "provider": "test-provider-2"
+  }
+
+]

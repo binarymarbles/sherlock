@@ -1,0 +1,103 @@
+{
+  "version": "1.0.0",
+
+  "processes": [
+    {
+      "user": "root",
+      "pid": 30632,
+      "cpu": 0.2,
+      "memory": 1.2,
+      "virtual_memory_size": 136536,
+      "residential_set_size": 1584,
+      "tty": "?",
+      "state": "Ss",
+      "started_at": "2011-09-13 14:15:01",
+      "cpu_time": "0:16",
+      "command": "/usr/sbin/apache2 -k start"
+    },
+    {
+      "user": "trond",
+      "pid": 22441,
+      "cpu": 0.0,
+      "memory": 1.5,
+      "virtual_memory_size": 25012,
+      "residential_set_size": 7844,
+      "tty": "pts/0",
+      "state": "Ss",
+      "started_at": "2011-09-19 16:55:24",
+      "cpu_time": "0:00",
+      "command": "-bash"
+    }
+  ],
+
+  "data": {
+
+    "load": {
+      "average": 0.40
+    },
+
+    "network_interfaces": {
+      "eth0": {
+        "labels": {
+          "ipv4_address": "10.0.0.1"
+        },
+        "packets": {
+          "rx": 72113462,
+          "rx_errors": 0,
+          "rx_dropped": 0,
+          "tx": 72743364,
+          "tx_errors": 0,
+          "tx_dropped": 0
+        },
+        "bytes": {
+          "rx": 48991202398,
+          "tx": 47529730387
+        }
+      },
+      "eth1": {
+        "labels": {
+          "ipv4_address": "10.0.0.2"
+        },
+        "packets": {
+          "rx": 100,
+          "rx_errors": 0,
+          "rx_dropped": 0,
+          "tx": 200,
+          "tx_errors": 0,
+          "tx_dropped": 0
+        },
+        "bytes": {
+          "rx": 100,
+          "tx": 200
+        }
+      }
+    },
+
+    "disks": {
+      "/dev/sda1": {
+        "labels": {
+          "mount_point": "/",
+          "file_system": "ext3"
+        },
+        "size": 4896400,
+        "used": 2948648,
+        "available": 1699024
+      }
+    },
+
+    "memory": {
+      "physical": {
+        "total": 509088,
+        "used": 459904,
+        "cached": 138332,
+        "free": 49184
+      },
+      "swap": {
+        "total": 265208,
+        "used": 170580,
+        "free": 94628
+      }
+    }
+    
+  }
+}

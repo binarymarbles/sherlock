@@ -1,0 +1,13 @@
+[
+
+  {
+    "id": "test-provider-1",
+    "name": "Test Provider 1"
+  },
+
+  {
+    "id": "test-provider-2",
+    "name": "Test Provider 2"
+  }
+
+]

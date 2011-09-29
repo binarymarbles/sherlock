@@ -1,0 +1,25 @@
+[
+
+  {
+    "id": "network_traffic",
+    "name": "Network Traffic",
+    "type": "incremental",
+    "unit": "Mbit/s",
+    "conversion": "bytes_to_mbit_per_second",
+    "keys": {
+      "network_interfaces.*.bytes.rx": "$1 in",
+      "network_interfaces.*.bytes.tx": "$1 out"
+    }
+  },
+
+  {
+    "id": "load_average",
+    "name": "Load Average",
+    "type": "counter",
+    "unit": "Load",
+    "keys": {
+      "load.average": "Load average"
+    }
+  }
+
+]
