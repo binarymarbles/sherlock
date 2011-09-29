@@ -14,25 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Sherlock
-  module Models
-  end
-end
-
-# ActiveModel-models.
-require 'sherlock/models/client'
-require 'sherlock/models/contact'
-require 'sherlock/models/provider'
-require 'sherlock/models/graph'
-require 'sherlock/models/graph_key'
-require 'sherlock/models/node'
-
-# MongoMapper models.
-require 'sherlock/models/process'
-require 'sherlock/models/label'
-require 'sherlock/models/metric'
-require 'sherlock/models/metric_avg_5m'
-require 'sherlock/models/metric_avg_1h'
-require 'sherlock/models/metric_avg_1d'
-require 'sherlock/models/metric_avg_1w'
-require 'sherlock/models/snapshot'
+require 'sherlock/extensions/time_extensions'

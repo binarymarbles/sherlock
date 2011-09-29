@@ -14,30 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Sherlock #:nodoc
-  module Models #:nodoc
+module TimeExtensions
 
-    # Defines a label for a node and metric path.
-    class Label
-
-      include MongoMapper::Document
-      set_collection_name 'labels'
-
-      # Define the fields for a label.
-      key :node_id, String
-      key :path, String
-      key :value, String
-
-      # Validate that the label has a node id set.
-      validates :node_id, :presence => true
-
-      # Validate that the label has a path set.
-      validates :path, :presence => true
-
-      # Validate that the label has a value set.
-      validates :value, :presence => true
-
-    end
-
+  # Round the current time down to the nearest amount of seconds.
+  # 
+  # @param [ Integer ] seconds The number of seconds to round with.
+  #
+  # @return [ Time ] The new, rounded time value.
+  def floor(seconds)
+    Time.at((self.to_f / seconds).round * seconds)
   end
+
 end
+
+Time.send(:include, TimeExtensions)

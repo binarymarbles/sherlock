@@ -17,25 +17,29 @@
 module Sherlock #:nodoc
   module Models #:nodoc
 
-    # Defines a label for a node and metric path.
-    class Label
+    # Defines average metrics for a 1 hour period.
+    class MetricAvg1h
 
       include MongoMapper::Document
-      set_collection_name 'labels'
+      set_collection_name 'metrics.1h'
 
-      # Define the fields for a label.
+      # Define the fields for a metric average.
       key :node_id, String
+      key :timestamp, Time
       key :path, String
-      key :value, String
+      key :counter, Float
 
-      # Validate that the label has a node id set.
+      # Validate that the metric average has a node id set.
       validates :node_id, :presence => true
 
-      # Validate that the label has a path set.
+      # Validate that the metric average has a timestamp set.
+      validates :timestamp, :presence => true
+
+      # Validate that the metric average has a path set.
       validates :path, :presence => true
 
-      # Validate that the label has a value set.
-      validates :value, :presence => true
+      # Validate that the metric average has a counter set.
+      validates :counter, :presence => true
 
     end
 

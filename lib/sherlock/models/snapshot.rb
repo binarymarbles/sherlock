@@ -21,6 +21,7 @@ module Sherlock #:nodoc
     class Snapshot
 
       include MongoMapper::Document
+      set_collection_name 'snapshots'
 
       # Snapshots have many processes.
       many :processes, :class_name => 'Sherlock::Models::Process'

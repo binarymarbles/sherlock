@@ -60,6 +60,14 @@ module Sherlock #:nodoc
 
     end
 
+    # Persist all snapshot data to the underlying MongoDB.
+    def persist!
+      @snapshot.save!
+      @processes.each(&:save!)
+      persist_labels
+      persist_metrics
+    end
+
     private
 
     # Raise a parser error.
@@ -270,6 +278,72 @@ module Sherlock #:nodoc
 
       end
 
+      metrics
+
+    end
+
+    # Persist all the labels found in the snapshot JSON.
+    def persist_labels
+      self.labels.each do |label|
+
+        # Write the label using an upsert so that we just replace the value of
+        # any pre-defined matching labels if they already exist.
+        conditions = { :node_id => label.node_id, :path => label.path }
+        value = label.to_mongo.delete_if { |k, v| k == '_id' }
+        
+        Sherlock::Models::Label.collection.update(conditions, value, :upsert => true)
+
+      end
+    end
+
+    # Persist all the metrics found in the snapshot JSON. This will also update
+    # any averages for the last 5 minutes, 1 hour, 1 day and 1 week within the
+    # metric timestamp.
+    def persist_metrics
+      self.metrics.each do |metric|
+
+        metric.save!
+
+        # Calculate the timestamps for the averages for this timestamp period.
+        timestamp_5m = metric.timestamp.floor(5.minutes)
+        timestamp_1h = metric.timestamp.floor(1.hour)
+        timestamp_1d = metric.timestamp.beginning_of_day
+        timestamp_1w = metric.timestamp.beginning_of_week
+
+        # Write the averages using an upsert with $inc so we just increment the
+        # value of any pre-defined average for the timespan, or create them if
+        # they don't exist.
+        conditions = { :node_id => metric.node_id, :path => metric.path }
+        value = {
+          '$set' => { :node_id => metric.node_id, :path => metric.path },
+          '$inc' => { :counter => metric.counter }
+        }
+
+        # Write the averages for the last 5 minutes.
+        conditions_5m = conditions.merge(:timestamp => timestamp_5m)
+        value_5m = value.dup
+        value_5m['$set'][:timestamp] = timestamp_5m
+        Sherlock::Models::MetricAvg5m.collection.update(conditions_5m, value_5m, :upsert => true)
+
+        # Write the averages for the last hour.
+        conditions_1h = conditions.merge(:timestamp => timestamp_1h)
+        value_1h = value.dup
+        value_1h['$set'][:timestamp] = timestamp_1h
+        Sherlock::Models::MetricAvg1h.collection.update(conditions_1h, value_1h, :upsert => true)
+
+        # Write the averages for the last day.
+        conditions_1d = conditions.merge(:timestamp => timestamp_1d)
+        value_1d = value.dup
+        value_1d['$set'][:timestamp] = timestamp_1d
+        Sherlock::Models::MetricAvg1d.collection.update(conditions_1d, value_1d, :upsert => true)
+        
+        # Write the averages for the last week.
+        conditions_1w = conditions.merge(:timestamp => timestamp_1w)
+        value_1w = value.dup
+        value_1w['$set'][:timestamp] = timestamp_1w
+        Sherlock::Models::MetricAvg1w.collection.update(conditions_1w, value_1w, :upsert => true)
+
+      end
     end
 
   end

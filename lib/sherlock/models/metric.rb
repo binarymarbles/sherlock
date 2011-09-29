@@ -21,13 +21,14 @@ module Sherlock #:nodoc
     class Metric
 
       include MongoMapper::Document
+      set_collection_name 'metrics'
 
       # Metrics belong to snapshots.
       belongs_to :snapshot
 
       # Define the fields for a metric.
       key :node_id, String
-      key :timestamp, String
+      key :timestamp, Time
       key :path, String
       key :counter, Float
 

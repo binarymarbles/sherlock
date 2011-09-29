@@ -42,5 +42,13 @@ RSpec.configure do |config|
   # config.mock_with :flexmock
   # config.mock_with :rr
   config.mock_with :rspec
+
+  # Reset all MongoDB collections before each test run.
+  config.before(:each) do
+    %w(Snapshot Process Label Metric MetricAvg5m MetricAvg1h MetricAvg1d MetricAvg1w).each do |model_class_name|
+      model_class = Sherlock::Models.const_get(model_class_name)
+      model_class.delete_all
+    end
+  end
   
 end

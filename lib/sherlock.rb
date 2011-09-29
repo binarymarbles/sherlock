@@ -20,7 +20,7 @@ module Sherlock
   #
   # @return [ String ] Current environment name.
   def self.env
-    ENV['RACK_ENV']
+    ENV['RACK_ENV'] || 'development'
   end
 
 end
@@ -33,6 +33,7 @@ require 'mongo_mapper'
 
 # Require the Sherlock libraries.
 require 'sherlock/errors'
+require 'sherlock/extensions'
 require 'sherlock/models'
 require 'sherlock/config'
 require 'sherlock/snapshot_parser'

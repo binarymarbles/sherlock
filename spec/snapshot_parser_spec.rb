@@ -95,4 +95,52 @@ describe Sherlock::SnapshotParser do
     end
   end
 
+  context '#persisting snapshot' do
+    let(:parser) { Sherlock::SnapshotParser.new(valid_json) }
+
+    it 'should persist the snapshot' do
+      parser.persist!
+      Sherlock::Models::Snapshot.count.should == 1
+    end
+
+    it 'should persist the processes' do
+      parser.persist!
+      Sherlock::Models::Process.count.should == 2
+    end
+
+    it 'should persist the labels' do
+      parser.persist!
+      Sherlock::Models::Label.count.should == 4
+    end
+
+    it 'should persist the metrics' do
+      parser.persist!
+      Sherlock::Models::Metric.count.should == 27
+    end
+
+    it 'should persist 5 minute averages' do
+      parser.persist!
+      Sherlock::Models::MetricAvg5m.count.should == 27
+    end
+
+    it 'should persist 1 hour averages' do
+      parser.persist!
+      Sherlock::Models::MetricAvg1h.count.should == 27
+    end
+
+    it 'should persist 1 day averages' do
+      parser.persist!
+      Sherlock::Models::MetricAvg1d.count.should == 27
+    end
+
+    it 'should persist 1 week averages' do
+      parser.persist!
+      Sherlock::Models::MetricAvg1w.count.should == 27
+    end
+
+    it 'should test that averages are created for the proper time periods' do
+      pending
+    end
+  end
+
 end

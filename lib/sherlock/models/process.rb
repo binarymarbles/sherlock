@@ -21,6 +21,7 @@ module Sherlock #:nodoc
     class Process
 
       include MongoMapper::Document
+      set_collection_name 'processes'
 
       # Processes belong to snapshots.
       belongs_to :snapshot
