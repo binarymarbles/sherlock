@@ -102,6 +102,16 @@ module Sherlock #:nodoc
       providers.select { |provider| provider.id == id }.first
     end
     
+    # Returns a graph with the specified ID.
+    #
+    # @param [ String ] id The ID of the graph to locate.
+    #
+    # @return [ Sherlock::Models::Graph ] The graph with the specified ID, or
+    #   nil if the graph was not found.
+    def graph_by_id(id)
+      graphs.select { |graph| graph.id == id }.first
+    end
+    
     # Returns a node with the specified ID.
     #
     # @param [ String ] id The ID of the node to locate.
@@ -110,6 +120,18 @@ module Sherlock #:nodoc
     #   nil if the node was not found.
     def node_by_id(id)
       nodes.select { |node| node.id == id }.first
+    end
+
+    # Returns the node list filtered by the optional list of arguments.
+    #
+    # @param [ Hash ] options The list of options to filter the node list by.
+    #
+    # @return [ Array<Sherlock::Models::Node> ] The list of nodes after
+    #   applying any filters.
+    def nodes_with_filter(options)
+      nodes.reject do |node|
+        (!options[:client].blank? && node.client.id != options[:client]) || (!options[:provider].blank? && node.provider.id != options[:provider])
+      end
     end
     
     private

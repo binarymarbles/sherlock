@@ -1,0 +1,33 @@
+- content_for :content_filter do
+  Viewing graph
+  %select#graph-type
+    - @graphs.each do |graph|
+      = option_element(graph.id, graph.name, @current_graph)
+
+%section#node-dashboard{:'data-node-id' => @node.id}
+  %section.info-strip
+    %article.open-alerts
+      %span.value NYI
+      %span.label Open alerts
+
+    %article.uptime
+      %span.value NYI
+      %span.label Uptime
+
+    %article.memory-usage
+      %span.value NYI
+      %span.label Memory usage
+
+    %article.swap-usage
+      %span.value NYI
+      %span.label Swap usage
+
+    %article.load-average
+      %span.value NYI
+      %span.label Load average
+
+    %article.process-count
+      %span.value NYI
+      %span.label Process count
+
+  %section.graphs

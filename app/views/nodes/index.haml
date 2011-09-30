@@ -1,0 +1,24 @@
+- content_for :content_filter do
+  Showing nodes for
+  %select#client-filter
+    = option_element('', 'all clients', @current_client)
+    - @clients.each do |client|
+      = option_element(client.id, client.name, @current_client)
+
+  located at
+  %select#provider-filter
+    = option_element('', 'all providers', @current_provider)
+    - @providers.each do |provider|
+      = option_element(provider.id, provider.name, @current_provider)
+
+%table
+  %thead
+    %tr
+      %th Node
+      %th Hostname
+      %th Status
+      %th Last push
+      %th Client
+      %th Provider
+  %tbody
+    = partial(:node, :collection => @nodes)

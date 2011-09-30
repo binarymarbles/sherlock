@@ -14,17 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'rubygems'
-require 'bundler/setup'
-require 'sinatra/base'
-require 'sinatra/content_for'
-require 'haml'
-
-$:.unshift File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
-require 'sherlock'
-require 'sherlock/sinatra'
-
-# Require all Sinatra controllers.
-Dir[File.expand_path(File.join(File.dirname(__FILE__), 'app', 'controllers', '*.rb'))].each do |f|
-  require f
+module Sherlock #:nodoc
+  module Sinatra #:nodoc
+    module Helpers #:nodoc
+    end
+  end
 end
+
+require 'sherlock/sinatra/helpers/partials'
+require 'sherlock/sinatra/helpers/link_to'
+require 'sherlock/sinatra/helpers/form'

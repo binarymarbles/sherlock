@@ -20,10 +20,11 @@ describe Sherlock::Controllers::Dashboard do
 
   let(:app) { Sherlock::Controllers::Dashboard }
 
-  context 'GET "/"' do
+  context 'GET "/"', :type => :request do
     it 'should be successful' do
-      get '/'
+      get('/')
       last_response.should be_ok
+      last_response.body.should have_content('Dashboard goes here')
     end
   end
 

@@ -25,17 +25,20 @@ gem 'activemodel'
 gem 'sinatra'
 gem 'log4r'
 gem 'haml'
+gem 'coffee-script'
 gem 'compass'
+gem 'sinatra-content-for'
 
 group :development do
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-pow'
   gem 'guard-compass'
+  gem 'guard-coffeescript'
   gem 'rspec'
   gem 'shoulda'
   gem 'rb-fsevent', :require => false
   gem 'timecop'
   gem 'rack-test', :require => 'rack/test'
-  gem 'webrat'
+  gem 'capybara'
 end

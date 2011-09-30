@@ -1,0 +1,41 @@
+/* line 6, ../../app/stylesheets/nodes.scss */
+#node-dashboard .info-strip {
+  border: 1px solid #cecece;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -khtml-border-radius: 3px;
+  border-radius: 3px;
+  overflow: hidden;
+  *zoom: 1;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px;
+  -o-box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px;
+}
+/* line 12, ../../app/stylesheets/nodes.scss */
+#node-dashboard .info-strip article {
+  border-right: 1px solid #cecece;
+  float: left;
+  padding: 15px 0;
+  width: 16%;
+}
+/* line 18, ../../app/stylesheets/nodes.scss */
+#node-dashboard .info-strip article:last-child {
+  border-right: none;
+}
+/* line 20, ../../app/stylesheets/nodes.scss */
+#node-dashboard .info-strip article span {
+  display: block;
+  padding-left: 15px;
+}
+/* line 24, ../../app/stylesheets/nodes.scss */
+#node-dashboard .info-strip article span.value {
+  font-weight: bold;
+  font-size: 1.4em;
+}
+/* line 29, ../../app/stylesheets/nodes.scss */
+#node-dashboard .info-strip article span.label {
+  color: #b2b2b2;
+}

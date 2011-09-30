@@ -2,21 +2,22 @@
   %head
     %title Sherlock Infrastructure Monitoring
     %link{:rel => 'stylesheet', :type => 'text/css', :media => 'screen, projected', :href => '/stylesheets/application.css'}
-    %script{:type => 'text/javascript', :src => '/javascripts/application.js'}
-  %body.dashboard-ui
+    %script{:type => 'text/javascript', :src => '/javascripts/jquery.min.js'}
+    %script{:type => 'text/javascript', :src => '/javascripts/nodes.js'}
+    %script{:type => 'text/javascript', :src => '/javascripts/graphs.js'}
+  %body{:class => "#{@controller_name}-ui"}
 
     %header#ui-header
       %nav
         %ul
-          %li.dashboard-nav
-            %a{:href => '#'} Dashboard
-          %li.alerts-nav
-            %a{:href => '#'} Alerts
-          %li.nodes-nav
-            %a{:href => '#'} Nodes
+          %li.dashboard-nav= link_to 'Dashboard', '/'
+          %li.alerts-nav= link_to 'Alerts', '#'
+          %li.nodes-nav= link_to 'Nodes', '/nodes'
       %h1 Sherlock Infrastructure Monitoring
     %header#page-header
-      %h1 Hellooooooo
+      %h1= @title
+      %section#content-filter
+        = yield_content :content_filter
 
     %section#content
       = yield

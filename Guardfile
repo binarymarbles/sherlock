@@ -15,6 +15,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+guard 'pow' do
+  watch('.rvmrc')
+  watch('Gemfile.lock')
+  watch('config.ru')
+  watch('app.rb')
+  watch(%r{^lib/.*\.rb$})
+  watch(%r{^app/.*\.rb$})
+  watch(%w{^config/.*\.rb$})
+end
+
+guard 'compass', :configuration_file => 'spec/assets/compass-config.rb' do
+  watch(%r{^app/stylesheets/.+\.scss$})
+end
+
+guard 'coffeescript', :input => 'app/javascripts', :output => 'public/javascripts'
+
 guard 'rspec', :version => 2, :cli => '--color --format nested --fail-fast', :all_on_start => false, :all_after_pass => false do
 
   # Map any file under lib/sherlock to the matching spec under spec/
@@ -47,21 +63,10 @@ guard 'rspec', :version => 2, :cli => '--color --format nested --fail-fast', :al
   # Rerun all request tests when app.rb changes.
   watch('app.rb')                                 { 'spec/requests' }
 
+  # Rerun all request tests when any sinatra-file changes.
+  watch(%r{^lib/sherlock/sinatra/})               { 'spec/requests' }
+
   # Rerun request tests when a view changes.
   watch(%r{^app/views/(.+)/})                     { |m| "spec/requests/#{m[1]}_spec.rb" }
   
-end
-
-guard 'pow' do
-  watch('.rvmrc')
-  watch('Gemfile.lock')
-  watch('config.ru')
-  watch('app.rb')
-  watch(%r{^lib/.*\.rb$})
-  watch(%r{^app/.*\.rb$})
-  watch(%w{^config/.*\.rb$})
-end
-
-guard 'compass', :configuration_file => 'spec/assets/compass-config.rb' do
-  watch(%r{^app/stylesheets/.+\.scss$})
 end

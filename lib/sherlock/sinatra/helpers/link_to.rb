@@ -14,17 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'rubygems'
-require 'bundler/setup'
-require 'sinatra/base'
-require 'sinatra/content_for'
-require 'haml'
+module Sherlock #:nodoc
+  module Sinatra #:nodoc
+    module Helpers #:nodoc
 
-$:.unshift File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
-require 'sherlock'
-require 'sherlock/sinatra'
+      # Simple link_to helper for Sinatra.
+      module LinkTo
 
-# Require all Sinatra controllers.
-Dir[File.expand_path(File.join(File.dirname(__FILE__), 'app', 'controllers', '*.rb'))].each do |f|
-  require f
+        # Render a link.
+        def link_to(label, url)
+          "<a href=\"#{escape_html(url)}\">#{escape_html(label)}</a>"
+        end
+
+      end
+
+    end
+  end
 end

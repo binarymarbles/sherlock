@@ -1,0 +1,26 @@
+/* line 1, ../../app/stylesheets/tables.scss */
+table {
+  width: 100%;
+}
+/* line 6, ../../app/stylesheets/tables.scss */
+table thead tr th {
+  border-right: 1px solid #ebebeb;
+  padding: 5px 15px;
+  color: #b2b2b2;
+  text-align: left;
+  text-transform: uppercase;
+}
+/* line 13, ../../app/stylesheets/tables.scss */
+table thead tr th:last-child {
+  border-right: 0;
+}
+/* line 20, ../../app/stylesheets/tables.scss */
+table tbody tr td {
+  border-right: 1px solid #ebebeb;
+  border-top: 1px solid #ebebeb;
+  padding: 5px 15px;
+}
+/* line 25, ../../app/stylesheets/tables.scss */
+table tbody tr td:last-child {
+  border-right: 0;
+}

@@ -24,4 +24,5 @@ module Sherlock #:nodoc
   end
 end
 
+require 'sherlock/sinatra/helpers'
 require 'sherlock/sinatra/base_controller'

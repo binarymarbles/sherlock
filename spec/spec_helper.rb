@@ -16,6 +16,7 @@
 
 require 'rubygems'
 require 'bundler/setup'
+require 'capybara/rspec'
 
 # Set up the development environment.
 Bundler.require(:development)
@@ -34,17 +35,10 @@ Dir[File.expand_path(File.join(File.dirname(__FILE__), 'support', '**', '*.rb'))
   require f
 end
 
-# Configure Webrat.
-Webrat.configure do |config|
-  config.mode = :rack
-end
-
 # Configure RSpec.
 RSpec.configure do |config|
 
   include Rack::Test::Methods
-  include Webrat::Methods
-  include Webrat::Matchers
 
   # == Mock Framework
   #
