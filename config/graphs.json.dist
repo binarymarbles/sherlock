@@ -1,0 +1,21 @@
+[
+
+  {
+    "id": "incremental_graph_id",
+    "name": "Incremental Graph Name",
+    "type": "incremental",
+    "keys": {
+      "metric.*.path": "$1 Label"
+    }
+  },
+
+  {
+    "id": "counter_graph_id",
+    "name": "Counter Graph Name",
+    "type": "counter",
+    "keys": {
+      "metric.path": "Metric Label"
+    }
+  }
+
+]

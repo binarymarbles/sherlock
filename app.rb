@@ -1,5 +1,4 @@
 # encoding: utf-8
-# vim:ft=ruby
 
 # Copyright 2011 Binary Marbles.
 # 
@@ -15,27 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source :rubygems
+require 'rubygems'
+require 'bundler/setup'
+require 'sinatra/base'
+require 'haml'
 
-gem 'mongo_mapper'
-gem 'bson_ext'
-gem 'json'
-gem 'activesupport'
-gem 'activemodel'
-gem 'sinatra'
-gem 'log4r'
-gem 'haml'
-gem 'compass'
+$:.unshift File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
+require 'sherlock'
+require 'sherlock/sinatra'
 
-group :development do
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'guard-pow'
-  gem 'guard-compass'
-  gem 'rspec'
-  gem 'shoulda'
-  gem 'rb-fsevent', :require => false
-  gem 'timecop'
-  gem 'rack-test', :require => 'rack/test'
-  gem 'webrat'
+# Require all Sinatra controllers.
+Dir[File.expand_path(File.join(File.dirname(__FILE__), 'app', 'controllers', '*.rb'))].each do |f|
+  require f
 end

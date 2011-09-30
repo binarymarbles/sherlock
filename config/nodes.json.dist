@@ -1,0 +1,10 @@
+[
+
+  {
+    "id": "node-id",
+    "hostname": "node.domain.tld",
+    "client": "client-id",
+    "provider": "provider-id"
+  }
+
+]

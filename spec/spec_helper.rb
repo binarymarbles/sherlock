@@ -22,8 +22,11 @@ Bundler.require(:development)
 ENV['RACK_ENV'] = 'test'
 
 # Add the Sherlock lib directory to the load path.
-$:.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
+$:.unshift File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'sherlock'
+
+# Require the main Sherlock application file for request tests.
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'app'))
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -31,8 +34,17 @@ Dir[File.expand_path(File.join(File.dirname(__FILE__), 'support', '**', '*.rb'))
   require f
 end
 
+# Configure Webrat.
+Webrat.configure do |config|
+  config.mode = :rack
+end
+
 # Configure RSpec.
 RSpec.configure do |config|
+
+  include Rack::Test::Methods
+  include Webrat::Methods
+  include Webrat::Matchers
 
   # == Mock Framework
   #

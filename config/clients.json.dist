@@ -1,0 +1,12 @@
+[
+  {
+    "id": "client-id",
+    "name": "Client Name",
+    "contacts": [
+      {
+        "name": "Contact Name",
+        "email": "email@contact.tld"
+      }
+    ]
+  }
+]

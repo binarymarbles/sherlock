@@ -22,7 +22,7 @@ module Sherlock #:nodoc
   # collected from the snapshot JSON.
   class SnapshotParser
 
-    attr_reader :snapshot_json, :data, :processes, :labels, :metrics
+    attr_reader :snapshot_json, :data, :snapshot, :processes, :labels, :metrics
 
     # Create a new instance of the snapshot parser. This will parse the raw JSON
     # passed in to an internal data structure, then extract all metrics from the

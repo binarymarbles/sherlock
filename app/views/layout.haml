@@ -1,0 +1,22 @@
+%html
+  %head
+    %title Sherlock Infrastructure Monitoring
+    %link{:rel => 'stylesheet', :type => 'text/css', :media => 'screen, projected', :href => '/stylesheets/application.css'}
+    %script{:type => 'text/javascript', :src => '/javascripts/application.js'}
+  %body.dashboard-ui
+
+    %header#ui-header
+      %nav
+        %ul
+          %li.dashboard-nav
+            %a{:href => '#'} Dashboard
+          %li.alerts-nav
+            %a{:href => '#'} Alerts
+          %li.nodes-nav
+            %a{:href => '#'} Nodes
+      %h1 Sherlock Infrastructure Monitoring
+    %header#page-header
+      %h1 Hellooooooo
+
+    %section#content
+      = yield

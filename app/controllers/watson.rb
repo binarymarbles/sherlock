@@ -1,5 +1,4 @@
 # encoding: utf-8
-# vim:ft=ruby
 
 # Copyright 2011 Binary Marbles.
 # 
@@ -15,27 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source :rubygems
+class Sherlock::Controllers::Watson < Sherlock::Sinatra::BaseController
 
-gem 'mongo_mapper'
-gem 'bson_ext'
-gem 'json'
-gem 'activesupport'
-gem 'activemodel'
-gem 'sinatra'
-gem 'log4r'
-gem 'haml'
-gem 'compass'
+  # Handle ParserErrors from the snapshot parser and present them properly to
+  # any connecting agent.
+  error Sherlock::Errors::ParserError do
+    status(422) # Unprocessable entity.
+    env['sinatra.error'].message
+  end
+  
+  post '/snapshot' do
+    parser = Sherlock::SnapshotParser.new(request.body.read.to_s)
+    parser.persist!
+    parser.snapshot.id.to_s
+  end
 
-group :development do
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'guard-pow'
-  gem 'guard-compass'
-  gem 'rspec'
-  gem 'shoulda'
-  gem 'rb-fsevent', :require => false
-  gem 'timecop'
-  gem 'rack-test', :require => 'rack/test'
-  gem 'webrat'
 end

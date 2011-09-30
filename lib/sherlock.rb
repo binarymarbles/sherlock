@@ -14,13 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Sherlock
+module Sherlock #:nodoc
 
   # Returns the current application environment.
   #
   # @return [ String ] Current environment name.
   def self.env
     ENV['RACK_ENV'] || 'development'
+  end
+
+  # Returns a logger for the current application instance.
+  #
+  # @return [ Sherlock::Logger ] Current application instance logger.
+  def self.log
+    @logger ||= Sherlock::Logger.new
   end
 
 end
@@ -39,6 +46,7 @@ MongoMapper.connection = Mongo::Connection.new(config[:hostname], 27017, :pool_s
 MongoMapper.database = config[:database]
 
 # Require the Sherlock libraries.
+require 'sherlock/logger'
 require 'sherlock/errors'
 require 'sherlock/extensions'
 require 'sherlock/models'

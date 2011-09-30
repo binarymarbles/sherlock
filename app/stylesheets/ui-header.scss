@@ -1,0 +1,60 @@
+@import "compass/css3/images";
+@import "compass/css3/border-radius";
+@import "compass/css3/box-shadow";
+
+#ui-header {
+  height: 45px;
+  padding: 0 10px;
+  background-color: #5a6366;
+
+  nav {
+    float: left;
+    margin-top: 10px;
+
+    ul {
+      li {
+        float: left;
+        margin-right: 3px;
+
+        &:last-child { margin-right: 0; }
+
+        a {
+          display: block;
+          line-height: 34px;
+          padding: 0 10px;
+          @include background-image(linear-gradient(center top, #676e71, #505456));
+          @include border-top-radius(3px);
+          @include box-shadow(rgba(0, 0, 0, 0.2) 0 0 4px);
+          border-color: #2e393c;
+          border-style: solid;
+          border-width: 1px 1px 0 1px;
+          color: #c8d2d7;
+          font-weight: bold;
+
+          &:hover {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  h1 {
+    float: right;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.2em;
+    line-height: 45px;
+  }
+}
+
+@mixin ui-navigation-state($name) {
+  body.#{$name}-ui #ui-header nav ul li.#{$name}-nav a {
+    background: #e1e8f0;
+    color: #505456;
+  }
+}
+
+@include ui-navigation-state('dashboard');
+@include ui-navigation-state('alerts');
+@include ui-navigation-state('nodes');

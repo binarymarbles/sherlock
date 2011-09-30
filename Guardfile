@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-guard 'rspec', :version => 2, :cli => '--color --format nested --fail-fast', :all_on_start => true, :all_after_pass => true do
+guard 'rspec', :version => 2, :cli => '--color --format nested --fail-fast', :all_on_start => false, :all_after_pass => false do
 
   # Map any file under lib/sherlock to the matching spec under spec/
   watch(%r{^lib/sherlock/(.+)\.rb$})              { |m| "spec/#{m[1]}_spec.rb" }
@@ -36,6 +36,32 @@ guard 'rspec', :version => 2, :cli => '--color --format nested --fail-fast', :al
   watch(%r{^spec/assets/config/.+\.json$})        { 'spec/config_spec.rb' }
 
   # Rerun all tests when the Gemfile.lock file changes.
-  watch(%r{^Gemfile\.lock$})                      { 'spec' }
+  watch('Gemfile.lock')                           { 'spec' }
 
+  # Rerun request specs when any controller file changes.
+  watch(%r{^app/controllers/(.+)\.rb$})           { |m| "spec/requests/#{m[1]}_spec.rb" }
+
+  # Rerun all request tests when config.ru changes.
+  watch('config.ru')                              { 'spec/requests' }
+
+  # Rerun all request tests when app.rb changes.
+  watch('app.rb')                                 { 'spec/requests' }
+
+  # Rerun request tests when a view changes.
+  watch(%r{^app/views/(.+)/})                     { |m| "spec/requests/#{m[1]}_spec.rb" }
+  
+end
+
+guard 'pow' do
+  watch('.rvmrc')
+  watch('Gemfile.lock')
+  watch('config.ru')
+  watch('app.rb')
+  watch(%r{^lib/.*\.rb$})
+  watch(%r{^app/.*\.rb$})
+  watch(%w{^config/.*\.rb$})
+end
+
+guard 'compass', :configuration_file => 'spec/assets/compass-config.rb' do
+  watch(%r{^app/stylesheets/.+\.scss$})
 end

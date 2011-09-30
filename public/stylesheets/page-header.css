@@ -1,0 +1,12 @@
+/* line 1, ../../app/stylesheets/page-header.scss */
+#page-header {
+  position: relative;
+  z-index: 10;
+  background: #e1e8f0;
+  padding: 15px;
+  border-bottom: 1px solid #cecece;
+}
+/* line 8, ../../app/stylesheets/page-header.scss */
+#page-header h1 {
+  font-size: 1.4em;
+}

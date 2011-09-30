@@ -1,5 +1,4 @@
 # encoding: utf-8
-# vim:ft=ruby
 
 # Copyright 2011 Binary Marbles.
 # 
@@ -15,27 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source :rubygems
+require 'spec_helper'
 
-gem 'mongo_mapper'
-gem 'bson_ext'
-gem 'json'
-gem 'activesupport'
-gem 'activemodel'
-gem 'sinatra'
-gem 'log4r'
-gem 'haml'
-gem 'compass'
+describe Sherlock::Controllers::Dashboard do
 
-group :development do
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'guard-pow'
-  gem 'guard-compass'
-  gem 'rspec'
-  gem 'shoulda'
-  gem 'rb-fsevent', :require => false
-  gem 'timecop'
-  gem 'rack-test', :require => 'rack/test'
-  gem 'webrat'
+  let(:app) { Sherlock::Controllers::Dashboard }
+
+  context 'GET "/"' do
+    it 'should be successful' do
+      get '/'
+      last_response.should be_ok
+    end
+  end
+
 end
