@@ -27,6 +27,8 @@ module Sherlock #:nodoc
       key :node_id, String
       key :timestamp, Time
       key :path, String
+      key :count, Float
+      key :total, Float
       key :counter, Float
 
       # Validate that the metric average has a node id set.
@@ -38,8 +40,8 @@ module Sherlock #:nodoc
       # Validate that the metric average has a path set.
       validates :path, :presence => true
 
-      # Validate that the metric average has a counter set.
-      validates :counter, :presence => true
+      # Add a compound index on node_id, path and timestamp.
+      MetricAvg1h.ensure_index([[:node_id, 1], [:path, 1], [:timestamp, -1]], :unique => true)
 
     end
 

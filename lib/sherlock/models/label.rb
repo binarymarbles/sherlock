@@ -37,6 +37,9 @@ module Sherlock #:nodoc
       # Validate that the label has a value set.
       validates :value, :presence => true
 
+      # Add a compound index on node_id and path
+      Label.ensure_index([[:node_id, 1], [:path, 1]], :unique => true)
+
     end
 
   end

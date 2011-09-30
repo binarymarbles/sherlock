@@ -40,6 +40,12 @@ module Sherlock #:nodoc
       # Validate that the snapshot has a timestamp set.
       validates :timestamp, :presence => true
 
+      # Add a index on node_id and timestamp.
+      Snapshot.ensure_index([[:node_id, 1], [:timestamp, -1]])
+
+      # Add a index on key.
+      Snapshot.ensure_index(:key, :unique => true)
+
       # Before validating or saving the model, build a unique, identifiable key
       # for this snapshot.
       before_validation :generate_key

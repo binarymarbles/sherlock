@@ -61,6 +61,9 @@ module Sherlock #:nodoc
       # Validate that the process has the command set.
       validates :command, :presence => true
 
+      # Add a index on snapshot_id.
+      Process.ensure_index(:snapshot_id)
+      
     end
 
   end

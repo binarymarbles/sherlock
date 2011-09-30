@@ -97,6 +97,13 @@ describe Sherlock::SnapshotParser do
 
   context '#persisting snapshot' do
     let(:parser) { Sherlock::SnapshotParser.new(valid_json) }
+    let(:snapshot_time) { Time.local(2011, 9, 29, 18, 11) }
+
+    # Freeze Time.now at a specific time.
+    before(:each) { Timecop.freeze(snapshot_time) }
+
+    # Release the frozen time.
+    after(:each) { Timecop.return }
 
     it 'should persist the snapshot' do
       parser.persist!
@@ -138,8 +145,89 @@ describe Sherlock::SnapshotParser do
       Sherlock::Models::MetricAvg1w.count.should == 27
     end
 
-    it 'should test that averages are created for the proper time periods' do
-      pending
+    context '#labels' do
+      it 'should update pre-existing labels instead of creating new ones' do
+        Timecop.freeze(snapshot_time + 1.minute) do
+          second_parser = Sherlock::SnapshotParser.new(valid_json)
+          second_parser.persist!
+          Sherlock::Models::Label.count.should == 4
+        end
+      end
+    end
+
+    context '#averages' do
+      let(:create_second_snapshot) do
+        p = Sherlock::SnapshotParser.new(valid_json)
+        p.persist!
+      end
+
+      before(:each) do
+        parser.persist!
+      end
+
+      context '#5 minute averages' do
+        it 'should only have one set per 5 minutes' do
+          Timecop.freeze(snapshot_time + 1.minute) do
+            create_second_snapshot
+            Sherlock::Models::MetricAvg5m.count.should == 27
+          end
+        end
+        
+        it 'should create a new set of averages after 5 minutes' do
+          Timecop.freeze(snapshot_time + 5.minutes) do
+            create_second_snapshot
+            Sherlock::Models::MetricAvg5m.count.should == 54
+          end
+        end
+      end
+
+      context '#1 hour averages' do
+        it 'should only have one set per hour' do
+          Timecop.freeze(snapshot_time + 40.minutes) do
+            create_second_snapshot
+            Sherlock::Models::MetricAvg1h.count.should == 27
+          end
+        end
+        
+        it 'should create a new set of averages after one hour' do
+          Timecop.freeze(snapshot_time + 1.hour) do
+            create_second_snapshot
+            Sherlock::Models::MetricAvg1h.count.should == 54
+          end
+        end
+      end
+
+      context '#1 day averages' do
+        it 'should only have one set per day' do
+          Timecop.freeze(snapshot_time + 3.hours) do
+            create_second_snapshot
+            Sherlock::Models::MetricAvg1d.count.should == 27
+          end
+        end
+
+        it 'should create a new set of averages after one day' do
+          Timecop.freeze(snapshot_time + 1.day) do
+            create_second_snapshot
+            Sherlock::Models::MetricAvg1d.count.should == 54
+          end
+        end
+      end
+
+      context '#1 week averages' do
+        it 'should only have one set per week' do
+          Timecop.freeze(snapshot_time + 2.days) do
+            create_second_snapshot
+            Sherlock::Models::MetricAvg1w.count.should == 27
+          end
+        end
+
+        it 'should create a new set of averages after one week' do
+          Timecop.freeze(snapshot_time + 1.week) do
+            create_second_snapshot
+            Sherlock::Models::MetricAvg1w.count.should == 54
+          end
+        end
+      end
     end
   end
 

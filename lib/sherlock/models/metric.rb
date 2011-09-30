@@ -44,6 +44,9 @@ module Sherlock #:nodoc
       # Validate that the metric has a counter set.
       validates :counter, :presence => true
 
+      # Add a compound index on node_id, path and timestamp.
+      Metric.ensure_index([[:node_id, 1], [:path, 1], [:timestamp, -1]], :unique => true)
+
     end
 
   end

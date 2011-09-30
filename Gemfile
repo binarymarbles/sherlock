@@ -29,4 +29,5 @@ group :development do
   gem 'rspec'
   gem 'shoulda'
   gem 'rb-fsevent', :require => false
+  gem 'timecop'
 end

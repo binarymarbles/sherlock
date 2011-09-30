@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe Sherlock::Models::MetricAvg1d do
   context '#validations' do
-    let(:metric_avg) { Sherlock::Models::MetricAvg1d.new(:node_id => 'test_node', :timestamp => Time.now, :path => 'test.metric', :counter => 10.0) }
+    let(:metric_avg) { Sherlock::Models::MetricAvg1d.new(:node_id => 'test_node', :timestamp => Time.now, :path => 'test.metric') }
 
     it 'should be valid' do
       metric_avg.should be_valid
@@ -36,11 +36,6 @@ describe Sherlock::Models::MetricAvg1d do
     
     it 'should validate presence of path' do
       metric_avg.path = nil
-      metric_avg.should_not be_valid
-    end
-
-    it 'should validate presence of counter' do
-      metric_avg.counter = nil
       metric_avg.should_not be_valid
     end
   end
