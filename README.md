@@ -24,10 +24,10 @@ use Chef or any other similar tools as well. A Chef cookbook will be built for
 Sherlock after the initial implementation phase has completed and we have a
 working beta release.
 
-The Sherlock server itself will be written in
+The Sherlock server itself is be written in
 [Ruby](http://www.ruby-lang.org/en/) utilizing
 [EventMachine](http://rubyeventmachine.com/) and
-[Sinatra](http://www.sinatrarb.com/).  Metrics will be stored in
+[Sinatra](http://www.sinatrarb.com/).  Metrics are stored in
 [MongoDB](http://www.mongodb.org/).
 
 System agents are implemented in Ruby in a [separate
