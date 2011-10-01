@@ -39,3 +39,7 @@
 #node-dashboard .info-strip article span.label {
   color: #b2b2b2;
 }
+/* line 36, ../../app/stylesheets/nodes.scss */
+#node-dashboard .graph {
+  margin-top: 15px;
+}

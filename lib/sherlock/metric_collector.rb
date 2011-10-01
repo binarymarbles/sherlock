@@ -46,6 +46,7 @@ module Sherlock #:nodoc
       @from = options[:from] || Time.now - 12.hours
       @to = options[:to] || Time.now
       @type = options[:type] || 'counter'
+      @conversion = options[:conversion]
 
     end
 
@@ -100,6 +101,9 @@ module Sherlock #:nodoc
     #
     # @return [ Object ] The matcher for the path.
     def matcher_for_path(path)
+
+      path = path.to_s
+
       if path.include?('*')
         quoted_path = path.gsub('.', '\.')
         quoted_path = quoted_path.gsub('*', '.+?')
@@ -107,6 +111,7 @@ module Sherlock #:nodoc
       else
         path
       end
+
     end
 
     # Returns the appropriate model to use when querying for metrics based on
@@ -181,6 +186,12 @@ module Sherlock #:nodoc
         data_set[path] ||= []
         data_set[path] << Sherlock::Models::MetricData.new(timestamp, counter)
 
+      end
+
+      # Apply the requested conversion on the data set if requested.
+      unless @conversion.blank?
+        converter = Sherlock::MetricConverter.new(data_set)
+        data_set = converter.apply_conversion(@conversion)
       end
 
       data_set

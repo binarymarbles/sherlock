@@ -58,6 +58,16 @@ module Sherlock #:nodoc
         self.keys ||= []
       end
 
+      # Returns all the paths requested by this graph.
+      def paths
+        keys.collect(&:metric)
+      end
+
+      # Returns true if the data for this graph needs a conversion.
+      def needs_conversion?
+        !conversion.blank?
+      end
+
     end
 
   end
