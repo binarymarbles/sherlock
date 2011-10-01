@@ -298,63 +298,9 @@ module Sherlock #:nodoc
 
     # Persist all the metrics found in the snapshot JSON. This will also update
     # any averages for the last 5 minutes, 1 hour, 1 day and 1 week within the
-    # metric timestamp.
+    # metric timestamp via callbacks inside the metric model.
     def persist_metrics
-      self.metrics.each do |metric|
-
-        metric.save!
-
-        # Calculate the timestamps for the averages for this timestamp period.
-        timestamp_5m = metric.timestamp.floor(5.minutes)
-        timestamp_1h = metric.timestamp.change(:min => 0)
-        timestamp_1d = metric.timestamp.beginning_of_day
-        timestamp_1w = metric.timestamp.beginning_of_week
-
-        # Write the averages using an upsert with $inc so we just increment the
-        # value of any pre-defined average for the timespan, or create them if
-        # they don't exist.
-        conditions = { :node_id => metric.node_id, :path => metric.path }
-        value = {
-          '$set' => { :node_id => metric.node_id, :path => metric.path },
-          '$inc' => { :total => metric.counter, :count => 1 }
-        }
-
-        # Write the averages for the last 5 minutes.
-        conditions_5m = conditions.merge(:timestamp => timestamp_5m)
-        value_5m = value.merge('$set' => { :timestamp => timestamp_5m })
-        Sherlock::Models::MetricAvg5m.collection.update(conditions_5m, value_5m, :upsert => true)
-        calculate_metric_average(Sherlock::Models::MetricAvg5m, metric.node_id, metric.path, timestamp_5m)
-
-        # Write the averages for the last hour.
-        conditions_1h = conditions.merge(:timestamp => timestamp_1h)
-        value_1h = value.merge('$set' => { :timestamp => timestamp_1h })
-        Sherlock::Models::MetricAvg1h.collection.update(conditions_1h, value_1h, :upsert => true)
-        calculate_metric_average(Sherlock::Models::MetricAvg1h, metric.node_id, metric.path, timestamp_1h)
-
-        # Write the averages for the last day.
-        conditions_1d = conditions.merge(:timestamp => timestamp_1d)
-        value_1d = value.merge('$set' => { :timestamp => timestamp_1d })
-        Sherlock::Models::MetricAvg1d.collection.update(conditions_1d, value_1d, :upsert => true)
-        calculate_metric_average(Sherlock::Models::MetricAvg1d, metric.node_id, metric.path, timestamp_1d)
-        
-        # Write the averages for the last week.
-        conditions_1w = conditions.merge(:timestamp => timestamp_1w)
-        value_1w = value.merge('$set' => { :timestamp => timestamp_1w })
-        Sherlock::Models::MetricAvg1w.collection.update(conditions_1w, value_1w, :upsert => true)
-        calculate_metric_average(Sherlock::Models::MetricAvg1w, metric.node_id, metric.path, timestamp_1w)
-
-      end
-    end
-
-    # Calculate the average value for a metric average.
-    #
-    # @param [ Class ] model_class The model class to update averages for.
-    # @param [ String ] node_id The node id to query for.
-    # @param [ String ] path The metric path to query for.
-    # @param [ Time ] timestamp The timestamp to query for.
-    def calculate_metric_average(model_class, node_id, path, timestamp)
-      average = model_class.find_by_node_id_and_path_and_timestamp!(node_id, path, timestamp)
-      average.set(:counter => average.total / average.count)
+      self.metrics.each(&:save)
     end
 
   end
