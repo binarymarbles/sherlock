@@ -33,12 +33,14 @@ class Sherlock::Controllers::Nodes < Sherlock::Sinatra::BaseController
     node = Sherlock::Config.node_by_id(params[:node_id])
     graph_id = params[:graph] || Sherlock::Config.graphs.first.id
     graph = Sherlock::Config.graph_by_id(graph_id)
+    state = Sherlock::NodeState.new(params[:node_id])
     
     title(node.hostname)
     expose(:node, node)
     expose(:graphs, Sherlock::Config.graphs)
     expose(:current_graph, params[:graph])
     expose(:graph, graph)
+    expose(:state, state)
     render_template :show
 
   end

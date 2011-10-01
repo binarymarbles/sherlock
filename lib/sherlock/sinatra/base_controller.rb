@@ -24,6 +24,7 @@ module Sherlock #:nodoc
       helpers Sherlock::Sinatra::Helpers::Partials
       helpers Sherlock::Sinatra::Helpers::LinkTo
       helpers Sherlock::Sinatra::Helpers::Form
+      helpers Sherlock::Sinatra::Helpers::Numbers
 
       # Set the view directory to be the app/views/<controller name>/ directory.
       set :views, Proc.new { File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'app', 'views', self.name.demodulize.underscore)) }

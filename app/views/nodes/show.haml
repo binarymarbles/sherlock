@@ -11,23 +11,23 @@
       %span.label Open alerts
 
     %article.uptime
-      %span.value NYI
+      %span.value= seconds_as_time(@state.uptime)
       %span.label Uptime
 
     %article.memory-usage
-      %span.value NYI
+      %span.value== #{bytes_to_mb(@state.memory_usage)}MB
       %span.label Memory usage
 
     %article.swap-usage
-      %span.value NYI
+      %span.value== #{bytes_to_mb(@state.swap_usage)}MB
       %span.label Swap usage
 
     %article.load-average
-      %span.value NYI
+      %span.value= @state.load_average.to_f.round(2)
       %span.label Load average
 
     %article.process-count
-      %span.value NYI
+      %span.value= @state.process_count
       %span.label Process count
 
   %article#node-graph.graph{:'data-graph-id' => @graph.id, :'data-node-id' => @node.id}

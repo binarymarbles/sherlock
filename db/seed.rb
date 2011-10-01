@@ -30,10 +30,14 @@ def create_metrics_for_snapshot(snapshot)
 
   @eth0_rx_counter ||= 0
   @eth0_tx_counter ||= 0
+  @uptime_counter ||= 0
   
   # Build a random value for the network counters.
   @eth0_rx_counter += rand(100000)
   @eth0_tx_counter += rand(200000)
+
+  # Increase the uptime counter by one minute.
+  @uptime_counter += 1.minute
 
   # Create the load.average metric.
   Sherlock::Models::Metric.create!(
@@ -41,6 +45,36 @@ def create_metrics_for_snapshot(snapshot)
     :timestamp => snapshot.timestamp,
     :path => 'load.average',
     :counter => rand()
+  )
+
+  # Create the memory metrics.
+  Sherlock::Models::Metric.create!(
+    :node_id => snapshot.node_id,
+    :timestamp => snapshot.timestamp,
+    :path => 'memory.physical.used',
+    :counter => rand(100000) + 1000
+  )
+  Sherlock::Models::Metric.create!(
+    :node_id => snapshot.node_id,
+    :timestamp => snapshot.timestamp,
+    :path => 'memory.swap.used',
+    :counter => rand(1000) + 1000
+  )
+  
+  # Create a uptime metric.
+  Sherlock::Models::Metric.create!(
+    :node_id => snapshot.node_id,
+    :timestamp => snapshot.timestamp,
+    :path => 'uptime',
+    :counter => @uptime_counter
+  )
+
+  # Create the process count metric.
+  Sherlock::Models::Metric.create!(
+    :node_id => snapshot.node_id,
+    :timestamp => snapshot.timestamp,
+    :path => 'processes.count',
+    :counter => rand(100) + 10
   )
 
   # Create the eth0 network metrics.
