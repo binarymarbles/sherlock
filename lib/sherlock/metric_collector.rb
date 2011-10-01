@@ -86,6 +86,7 @@ module Sherlock #:nodoc
       query = query.where(:node_id => @node_id)
       query = query.where(:timestamp.gte => @from)
       query = query.where(:timestamp.lte => @to)
+      query = query.sort(:timestamp.asc)
       metrics = query.all
 
       # Return a data set based on the collection of metrics.
