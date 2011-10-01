@@ -45,7 +45,11 @@ module Sherlock #:nodoc
       validates :counter, :presence => true
 
       # Add a compound index on node_id, path and timestamp.
-      Metric.ensure_index([[:node_id, 1], [:path, 1], [:timestamp, -1]], :unique => true)
+      Metric.ensure_index([[:node_id, 1], [:path, 1], [:timestamp, 1]], :unique => true)
+
+      # After creating a metric, update the "current metric" value for this
+      # path.
+      after_create :update_current_metric_value
 
       # After creating a metric, update all relevant averages.
       after_create :update_averages
@@ -110,7 +114,24 @@ module Sherlock #:nodoc
         average.set(:counter => average.total / average.count)
       end
 
-    end
+      # Update the "current metric" value of this metric path, given that we are
+      # the most recent metric of this type.
+      def update_current_metric_value
 
+        # Find the ID of the most recent metric for this node and path.
+        most_recent_metric = Metric.where(:node_id => node_id).where(:path => path).sort(:timestamp.desc).limit(1).first
+        if !most_recent_metric.blank? && most_recent_metric.id == id
+
+          # We are the most recent metric of this type, create or update the
+          # current metric value.
+          conditions = { :node_id => node_id, :path => path }
+          value = { :node_id => node_id, :path => path, :counter => counter }
+          Sherlock::Models::CurrentMetric.collection.update(conditions, value, :upsert => true)
+
+        end
+
+      end
+
+    end
   end
 end

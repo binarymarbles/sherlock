@@ -50,6 +50,7 @@ describe Sherlock::MetricCollector do
 
     it 'should return values as-is for counter type' do
       create_snapshots([ { :counter => 1 }, { :counter => 2 }, { :counter => 3 }, { :counter => 4 } ])
+      puts "All metrics: #{Sherlock::Models::Metric.all.inspect}"
       collector = Sherlock::MetricCollector.new('test', ['test.metric'])
       collector.metrics.keys.size.should == 1
       collector.metrics['test.metric'].size.should == 4

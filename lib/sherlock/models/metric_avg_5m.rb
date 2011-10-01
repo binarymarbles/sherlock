@@ -41,7 +41,7 @@ module Sherlock #:nodoc
       validates :path, :presence => true
 
       # Add a compound index on node_id, path and timestamp.
-      MetricAvg5m.ensure_index([[:node_id, 1], [:path, 1], [:timestamp, -1]], :unique => true)
+      MetricAvg5m.ensure_index([[:node_id, 1], [:path, 1], [:timestamp, 1]], :unique => true)
       
     end
 
