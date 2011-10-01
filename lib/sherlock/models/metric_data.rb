@@ -16,26 +16,19 @@
 
 module Sherlock #:nodoc
   module Models #:nodoc
+
+    # Holds a set of metric data collected with the metric collector class.
+    class MetricData
+
+      attr_reader :timestamp, :counter
+
+      # Initialize a new metric data model.
+      def initialize(timestamp, counter)
+        @timestamp = timestamp
+        @counter = counter
+      end
+
+    end
+
   end
 end
-
-# "Dummy" models.
-require 'sherlock/models/metric_data'
-
-# ActiveModel-models.
-require 'sherlock/models/client'
-require 'sherlock/models/contact'
-require 'sherlock/models/provider'
-require 'sherlock/models/graph'
-require 'sherlock/models/graph_key'
-require 'sherlock/models/node'
-
-# MongoMapper models.
-require 'sherlock/models/process'
-require 'sherlock/models/label'
-require 'sherlock/models/metric'
-require 'sherlock/models/metric_avg_5m'
-require 'sherlock/models/metric_avg_1h'
-require 'sherlock/models/metric_avg_1d'
-require 'sherlock/models/metric_avg_1w'
-require 'sherlock/models/snapshot'
