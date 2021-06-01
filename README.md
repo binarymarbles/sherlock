@@ -31,9 +31,4 @@ The Sherlock server itself is be written in
 [MongoDB](http://www.mongodb.org/).
 
 System agents are implemented in Ruby in a [separate
-project](http://github.com/binarymarbles/watson).
-
-# License
-
-Sherlock is copyright 2011 by [Binary Marbles](http://www.binarymarbles.com/),
-released under the Apache 2.0 License (see LICENSE for details).
+project](http://github.com/tanordheim/watson).
