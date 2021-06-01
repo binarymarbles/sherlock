@@ -1,7 +1,6 @@
 # Sherlock
 
-[Sherlock](http://www.sherlockapp.org/) is an open source infrastructure
-monitoring application.
+Sherlock is an open source infrastructure monitoring application.
 
 As of now, its in the super-very-early stages of development, but some
 feature highlights will be:
